@@ -2,12 +2,12 @@ import fs from "fs";
 import path from "path";
 
 const privateKeyPem = fs.readFileSync(
-  path.resolve(process.cwd(), "keys/private.pem"),
+  path.resolve(process.cwd(), "src/keys/private.pem"),
   "utf-8",
 );
 
 const publicKeyPem = fs.readFileSync(
-  path.resolve(process.cwd(), "keys/public.pem"),
+  path.resolve(process.cwd(), "src/keys/public.pem"),
   "utf-8",
 );
 
