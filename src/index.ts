@@ -1,11 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
-import dotenv from "dotenv";
-import discoveryRouter from "./routes/discovery.routes";
 import { errorHandler } from "./middleware/errorHandler";
-
-dotenv.config();
+import discoveryRouter from "./routes/discovery.routes";
+import authRouter from "./routes/auth.routes";
 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/.well-known", discoveryRouter);
+app.use("/auth", authRouter);
 
 app.use(errorHandler);
 
