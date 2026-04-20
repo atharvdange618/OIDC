@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify, importPKCS8, importSPKI } from "jose";
-import { privateKeyPem, publicKeyPem, KEY_ID, ISSUER } from "../config/keys.js";
+import { privateKeyPem, publicKeyPem, KEY_ID, ISSUER } from "../config/keys";
 
 export async function signJwt(
   payload: Record<string, unknown>,

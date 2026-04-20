@@ -1,5 +1,5 @@
 import { importSPKI, exportJWK } from "jose";
-import { publicKeyPem, KEY_ID } from "../config/keys.js";
+import { publicKeyPem, KEY_ID } from "../config/keys";
 
 export async function getJwks() {
   const publicKey = await importSPKI(publicKeyPem, "RS256");
