@@ -1,0 +1,46 @@
+{
+  "name": "oidc",
+  "version": "1.0.0",
+  "description": "A from-scratch implementation of an OpenID Connect Identity Provider, built to understand how auth systems actually work under the hood",
+  "homepage": "https://github.com/atharvdange618/OIDC#readme",
+  "bugs": {
+    "url": "https://github.com/atharvdange618/OIDC/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atharvdange618/OIDC.git"
+  },
+  "license": "MIT",
+  "author": "Atharv Dange",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:push": "prisma db push",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.7.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "jose": "^6.2.2",
+    "prisma": "^7.7.0",
+    "uuid": "^14.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "@types/uuid": "^11.0.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^6.0.3"
+  }
+}
