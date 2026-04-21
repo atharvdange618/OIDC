@@ -19,7 +19,8 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  authCodes AuthCode[]
+  authCodes     AuthCode[]
+  refreshTokens RefreshToken[]
 }
 
 model OAuthClient {
@@ -34,7 +35,8 @@ model OAuthClient {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  authCodes AuthCode[]
+  authCodes     AuthCode[]
+  refreshTokens RefreshToken[]
 }
 
 model AuthCode {
@@ -55,4 +57,21 @@ model AuthCode {
   user   User        @relation(fields: [userId], references: [id])
 
   @@index([code])
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  clientId  String
+  scopes    String[]
+  expiresAt DateTime
+  usedAt    DateTime?
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user   User        @relation(fields: [userId], references: [id])
+  client OAuthClient @relation(fields: [clientId], references: [clientId])
+
+  @@index([token])
 }
