@@ -175,23 +175,23 @@ Short-lived, one-time-use codes. The `usedAt` field enforces single-use at the D
 
 ```prisma
 model AuthCode {
-  id                    String    @id @default(cuid())
-  code                  String    @unique
-  clientId              String
-  userId                String
-  redirectUri           String
-  scopes                String[]
-  expiresAt             DateTime
-  usedAt                DateTime? // null = not used yet
+  id                  String    @id @default(cuid())
+  code                String    @unique
+  scopes              String[]
+  redirectUri         String
+  expiresAt           DateTime
+  usedAt              DateTime?
+  codeChallenge       String
+  codeChallengeMethod String    @default("S256")
+  createdAt           DateTime  @default(now())
 
-  // PKCE
-  codeChallenge         String
-  codeChallengeMethod   String    @default("S256")
+  clientId String
+  userId   String
 
-  createdAt             DateTime  @default(now())
+  client OAuthClient @relation(fields: [clientId], references: [clientId])
+  user   User        @relation(fields: [userId], references: [id])
 
-  client                OAuthClient @relation(fields: [clientId], references: [clientId])
-  user                  User        @relation(fields: [userId], references: [id])
+  @@index([code])
 }
 ```
 
@@ -433,24 +433,33 @@ The IdP does not store or validate state. The client stores it in a cookie or se
 ## Project Structure
 
 ```
-idp-service/
+OIDC/
 ├── prisma/
 │   └── schema.prisma
 ├── src/
-│   ├── routes/
-│   │   ├── auth.ts           # register, login
-│   │   ├── authorize.ts      # /authorize endpoint
-│   │   ├── token.ts          # /token endpoint
-│   │   ├── userinfo.ts       # /userinfo endpoint
-│   │   ├── clients.ts        # client registration
-│   │   └── discovery.ts      # /.well-known/* endpoints
-│   ├── middleware/
-│   │   ├── validateClient.ts
-│   │   └── requireAuth.ts
+│   ├── config/               # config and env variables
+│   ├── controller/           # Express route controllers
+│   ├── errors/               # custom error classes
 │   ├── lib/
+│   │   ├── jwks.ts           # build JWKS response from public key
 │   │   ├── jwt.ts            # sign + verify with RS256
 │   │   ├── pkce.ts           # PKCE verification logic
-│   │   └── jwks.ts           # build JWKS response from public key
+│   │   └── prisma.ts         # prisma client instance
+│   ├── middleware/
+│   │   ├── errorHandler.ts   # global error handler
+│   │   ├── requireAuth.ts    # authentication middleware
+│   │   ├── validate.ts       # validation middleware
+│   │   └── validateClient.ts # client validation
+│   ├── rest/                 # .http files for testing
+│   ├── routes/
+│   │   ├── auth.routes.ts           # register, login
+│   │   ├── authorize.routes.ts      # /authorize endpoint
+│   │   ├── clients.routes.ts        # client registration
+│   │   ├── discovery.routes.ts      # /.well-known/* endpoints
+│   │   ├── token.routes.ts          # /token endpoint
+│   │   └── userinfo.routes.ts       # /userinfo endpoint
+│   ├── services/             # Business logic
+│   ├── validation/           # Zod schemas for request validation
 │   └── index.ts
 ├── keys/
 │   ├── private.pem           # gitignored
@@ -466,7 +475,7 @@ idp-service/
 ```bash
 # Clone and install
 git clone https://github.com/atharvdange618/OIDC.git
-cd idp-service
+cd OIDC
 npm install
 
 # Generate RS256 key pair
