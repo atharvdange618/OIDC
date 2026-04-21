@@ -1,0 +1,17 @@
+### Authorize - happy path (PKCE with S256, full scopes)
+GET http://localhost:4000/authorize?client_id=cmo8l633f0001bu6exgw9n8oe&redirect_uri=http://localhost:3000/callback&response_type=code&scope=openid profile email&state=random_state_string&code_challenge=L1D9rdELnMLgF4Hn9jOLPMw8gm3ld5yoXSoB22uEsSg&code_challenge_method=S256&user_id=cmo7q07gr00000m6e08bzg2v5
+
+### Authorize - openid scope only
+GET http://localhost:4000/authorize?client_id=cmo8l633f0001bu6exgw9n8oe&redirect_uri=http://localhost:3000/callback&response_type=code&scope=openid&state=random_state_string&code_challenge=L1D9rdELnMLgF4Hn9jOLPMw8gm3ld5yoXSoB22uEsSg&code_challenge_method=S256&user_id=cmo7q07gr00000m6e08bzg2v5
+
+### Authorize - missing openid scope (should fail with 400)
+GET http://localhost:4000/authorize?client_id=cmo8l633f0001bu6exgw9n8oe&redirect_uri=http://localhost:3000/callback&response_type=code&scope=profile email&state=random_state_string&code_challenge=L1D9rdELnMLgF4Hn9jOLPMw8gm3ld5yoXSoB22uEsSg&code_challenge_method=S256&user_id=cmo7q07gr00000m6e08bzg2v5
+
+### Authorize - mismatched redirect_uri (should fail with 400)
+GET http://localhost:4000/authorize?client_id=cmo8l633f0001bu6exgw9n8oe&redirect_uri=http://localhost:9999/evil&response_type=code&scope=openid profile email&state=random_state_string&code_challenge=L1D9rdELnMLgF4Hn9jOLPMw8gm3ld5yoXSoB22uEsSg&code_challenge_method=S256&user_id=cmo7q07gr00000m6e08bzg2v5
+
+### Authorize - invalid client_id (should fail with 404)
+GET http://localhost:4000/authorize?client_id=nonexistent_client&redirect_uri=http://localhost:3000/callback&response_type=code&scope=openid profile email&state=random_state_string&code_challenge=L1D9rdELnMLgF4Hn9jOLPMw8gm3ld5yoXSoB22uEsSg&code_challenge_method=S256&user_id=cmo7q07gr00000m6e08bzg2v5
+
+### Authorize - invalid user_id (should fail with 401)
+GET http://localhost:4000/authorize?client_id=cmo8l633f0001bu6exgw9n8oe&redirect_uri=http://localhost:3000/callback&response_type=code&scope=openid profile email&state=random_state_string&code_challenge=L1D9rdELnMLgF4Hn9jOLPMw8gm3ld5yoXSoB22uEsSg&code_challenge_method=S256&user_id=nonexistent_user
