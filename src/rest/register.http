@@ -1,9 +1,59 @@
+### Register - happy path
 POST http://localhost:4000/auth/register
 Content-Type: application/json
 
 {
-    "email":"atharv@test.com",
-    "password":"password123",
-    "firstName":"Atharv",
-    "lastName":"Dange"
+    "email": "atharv@test.com",
+    "password": "password123",
+    "firstName": "Atharv",
+    "lastName": "Dange"
 }
+
+### Register - duplicate email (should fail with 409)
+POST http://localhost:4000/auth/register
+Content-Type: application/json
+
+{
+    "email": "atharv@test.com",
+    "password": "password123",
+    "firstName": "Atharv",
+    "lastName": "Dange"
+}
+
+### Register - invalid email (should fail with 400)
+POST http://localhost:4000/auth/register
+Content-Type: application/json
+
+{
+    "email": "not-an-email",
+    "password": "password123",
+    "firstName": "Atharv",
+    "lastName": "Dange"
+}
+
+### Register - password too short (should fail with 400)
+POST http://localhost:4000/auth/register
+Content-Type: application/json
+
+{
+    "email": "short@test.com",
+    "password": "pass",
+    "firstName": "Atharv",
+    "lastName": "Dange"
+}
+
+### Register - missing firstName (should fail with 400)
+POST http://localhost:4000/auth/register
+Content-Type: application/json
+
+{
+    "email": "nofirst@test.com",
+    "password": "password123",
+    "lastName": "Dange"
+}
+
+### Register - empty body (should fail with 400)
+POST http://localhost:4000/auth/register
+Content-Type: application/json
+
+{}
