@@ -143,6 +143,7 @@ model User {
   updatedAt       DateTime  @updatedAt
 
   authCodes       AuthCode[]
+  refreshTokens   RefreshToken[]
 }
 ```
 
@@ -164,6 +165,7 @@ model OAuthClient {
   updatedAt        DateTime @updatedAt
 
   authCodes        AuthCode[]
+  refreshTokens    RefreshToken[]
 }
 ```
 
@@ -196,6 +198,37 @@ model AuthCode {
 **Why `usedAt` instead of deleting the record?**
 
 Deletion loses the audit trail. If a code gets reused, you want to know it happened. Some IdPs revoke all tokens from a reused code as a security measure. `usedAt` makes that possible.
+
+### `refresh_tokens`
+
+Persistent tokens that allow clients to obtain new access tokens without requiring the user to log in again. This table tracks the refresh token lifecycle, allowing us to implement features like validation, revocation, and rotation.
+
+```prisma
+model RefreshToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  userId    String
+  clientId  String
+  scopes    String[]
+  expiresAt DateTime
+  usedAt    DateTime?
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user   User        @relation(fields: [userId], references: [id])
+  client OAuthClient @relation(fields: [clientId], references: [clientId])
+
+  @@index([token])
+}
+```
+
+**Why store refresh tokens in the database?**
+
+Unlike access tokens (which are usually stateless JWTs), refresh tokens are long-lived and must be stateful. By storing them, we can:
+
+- **Revoke them** when a user logs out, disconnects an app, or if a token is compromised (`revokedAt`).
+- **Track usage** (`usedAt`) to implement refresh token rotation and detect reuse/replay attacks.
+- **Enforce expiration** (`expiresAt`) securely on the server-side.
 
 ---
 
