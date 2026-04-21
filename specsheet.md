@@ -432,7 +432,7 @@ idp-service/
 
 ```bash
 # Clone and install
-git clone <repo>
+git clone https://github.com/atharvdange618/OIDC.git
 cd idp-service
 npm install
 
