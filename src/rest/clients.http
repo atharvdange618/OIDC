@@ -1,0 +1,40 @@
+### Register an OAuth client
+POST http://localhost:4000/clients/register
+Content-Type: application/json
+
+{
+    "name": "Demo App",
+    "redirectUris": ["http://localhost:3000/callback"],
+    "allowedScopes": ["openid", "profile", "email"],
+    "appUrl": "http://localhost:3000"
+}
+
+### Register - minimal (openid only)
+POST http://localhost:4000/clients/register
+Content-Type: application/json
+
+{
+    "name": "Minimal Client",
+    "redirectUris": ["http://localhost:3000/callback"],
+    "allowedScopes": ["openid"]
+}
+
+### Register - missing openid scope (should fail with 400)
+POST http://localhost:4000/clients/register
+Content-Type: application/json
+
+{
+    "name": "Bad Client",
+    "redirectUris": ["http://localhost:3000/callback"],
+    "allowedScopes": ["profile", "email"]
+}
+
+### Register - invalid redirect URI (should fail with 400)
+POST http://localhost:4000/clients/register
+Content-Type: application/json
+
+{
+    "name": "Bad URI Client",
+    "redirectUris": ["not-a-url"],
+    "allowedScopes": ["openid"]
+}
