@@ -10,6 +10,8 @@ import discoveryRouter from "./routes/discovery.routes";
 import authRouter from "./routes/auth.routes";
 import clientsRouter from "./routes/clients.routes";
 import authorizeRouter from "./routes/authorize.routes";
+import tokenRouter from "./routes/token.routes";
+import userinfoRouter from "./routes/userinfo.routes";
 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
@@ -24,6 +26,8 @@ app.use("/.well-known", discoveryRouter);
 app.use("/auth", authRouter);
 app.use("/clients", clientsRouter);
 app.use("/authorize", authorizeRouter);
+app.use("/token", tokenRouter);
+app.use("/userinfo", userinfoRouter);
 
 app.use(errorHandler);
 
