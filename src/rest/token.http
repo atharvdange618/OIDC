@@ -1,0 +1,11 @@
+### Token Endpoint - Authorization Code Grant
+POST http://localhost:4000/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&code=NOtnEQKgZ3we8u85ANVI8wdvwGAkNu-UM8n-S-2a4eI&redirect_uri=http://localhost:3000/callback&client_id=cmo8l633f0001bu6exgw9n8oe&client_secret=5703246febfa0e1e4a07293a7436cb2591dbd5b844ab6c4c90a15a6918c9b787&code_verifier=SahBnbnBdgDC9iuPYz8KWvs5psOo9zZX6je9ro82tbo
+
+### Token Endpoint - Refresh Token Grant
+POST http://localhost:4000/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&refresh_token=s-aI4Q-9FeAu5eAtPEqehScjaOUcHZkBJFqcKMmd7lo&client_id=cmo8l633f0001bu6exgw9n8oe&client_secret=5703246febfa0e1e4a07293a7436cb2591dbd5b844ab6c4c90a15a6918c9b787
