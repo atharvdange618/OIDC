@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Authorize — <%= clientName %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+  <div class="w-full max-w-md px-8 py-10 bg-zinc-900 rounded-2xl border border-zinc-800">
+    <h1 class="text-2xl font-semibold mb-1">Authorize access</h1>
+    <p class="text-zinc-400 text-sm mb-8">
+      <span class="text-white font-medium"><%= clientName %></span>
+      wants access to your account
+    </p>
+
+    <div class="mb-8 space-y-2">
+      <p class="text-xs text-zinc-500 uppercase tracking-wider mb-3">This app will be able to</p>
+      <% scopes.forEach(scope => { %>
+        <div class="flex items-center gap-3 px-4 py-3 bg-zinc-800 rounded-lg">
+          <div class="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0"></div>
+          <span class="text-sm text-zinc-300"><%= scope %></span>
+        </div>
+      <% }) %>
+    </div>
+
+    <p class="text-xs text-zinc-500 mb-6">
+      Signed in as <span class="text-zinc-300"><%= userEmail %></span>
+    </p>
+
+    <div class="flex gap-3">
+      <form method="POST" action="/authorize/deny" class="flex-1">
+        <input type="hidden" name="state" value="<%= state %>" />
+        <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>" />
+        <button
+          type="submit"
+          class="w-full py-2.5 bg-zinc-800 text-white font-medium rounded-lg text-sm hover:bg-zinc-700 transition-colors border border-zinc-700"
+        >
+          Deny
+        </button>
+      </form>
+
+      <form method="POST" action="/authorize/approve" class="flex-1">
+        <input type="hidden" name="response_type" value="code" />
+        <input type="hidden" name="client_id" value="<%= client_id %>" />
+        <input type="hidden" name="redirect_uri" value="<%= redirect_uri %>" />
+        <input type="hidden" name="scope" value="<%= scopeString %>" />
+        <input type="hidden" name="state" value="<%= state %>" />
+        <input type="hidden" name="code_challenge" value="<%= code_challenge %>" />
+        <input type="hidden" name="code_challenge_method" value="<%= code_challenge_method %>" />
+        <button
+          type="submit"
+          class="w-full py-2.5 bg-white text-zinc-950 font-medium rounded-lg text-sm hover:bg-zinc-100 transition-colors"
+        >
+          Allow
+        </button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

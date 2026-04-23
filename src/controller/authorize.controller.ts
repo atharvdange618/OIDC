@@ -2,22 +2,76 @@ import { Request, Response } from "express";
 import { authorizeSchema } from "../validation/authorize.validation";
 import { authorizeService } from "../services/authorize.service";
 import { BadRequestError } from "../errors/AppError";
+import { prisma } from "../lib/prisma";
+import { ISSUER } from "../config/keys";
+
+const SCOPE_DESCRIPTIONS: Record<string, string> = {
+  openid: "Verify your identity",
+  profile: "Access your name and profile picture",
+  email: "Access your email address",
+};
 
 export class AuthorizeController {
   async authorize(req: Request, res: Response) {
     const input = authorizeSchema.parse(req.query);
 
-    // in a real IdP this comes from the session after the user logs in
-    // on the IdP's login page. as this is a POC we accept it as a query param.
-    const userId = req.query.user_id as string;
-    if (!userId) throw new BadRequestError("user_id is required");
+    if (!req.session.userId) {
+      const params = new URLSearchParams({ ...input });
+      res.redirect(`/auth/login?${params.toString()}`);
+      return;
+    }
 
+    const client = await prisma.oAuthClient.findUnique({
+      where: { clientId: input.client_id },
+    });
+
+    if (!client || !client.isActive)
+      throw new BadRequestError("Invalid client");
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.session.userId },
+      select: { email: true },
+    });
+
+    if (!user) {
+      req.session.destroy(() => {});
+      const params = new URLSearchParams({ ...input });
+      res.redirect(`/auth/login?${params.toString()}`);
+      return;
+    }
+
+    const requestedScopes = input.scope.split(" ");
+
+    res.render("consent", {
+      issuer: ISSUER,
+      clientName: client.name,
+      client_id: input.client_id,
+      redirect_uri: input.redirect_uri,
+      scope: requestedScopes,
+      scopeString: input.scope,
+      state: input.state,
+      code_challenge: input.code_challenge,
+      code_challenge_method: input.code_challenge_method,
+      userEmail: user.email,
+      scopes: requestedScopes.map((s) => SCOPE_DESCRIPTIONS[s] ?? s),
+    });
+  }
+
+  async approve(req: Request, res: Response) {
+    if (!req.session.userId) throw new BadRequestError("No active session");
+
+    const input = authorizeSchema.parse(req.body);
     const { code, state, redirectUri } = await authorizeService.authorize(
       input,
-      userId,
+      req.session.userId,
     );
 
     res.redirect(`${redirectUri}?code=${code}&state=${state}`);
+  }
+
+  async deny(req: Request, res: Response) {
+    const { redirect_uri, state } = req.body;
+    res.redirect(`${redirect_uri}?error=access_denied&state=${state}`);
   }
 }
 

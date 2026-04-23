@@ -3,8 +3,11 @@ dotenv.config();
 
 import express from "express";
 import helmet from "helmet";
+import path from "path";
 import cors from "cors";
 import hpp from "hpp";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import { errorHandler } from "./middleware/errorHandler";
 import discoveryRouter from "./routes/discovery.routes";
 import authRouter from "./routes/auth.routes";
@@ -15,12 +18,34 @@ import userinfoRouter from "./routes/userinfo.routes";
 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
+const PgSession = connectPgSimple(session);
 
-app.use(helmet());
+app.set("view engine", "ejs");
+app.set("views", path.join(process.cwd(), "src/views"));
+
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
 app.use(hpp());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  session({
+    store: new PgSession({
+      conString: process.env.DATABASE_URL,
+      tableName: "session",
+      pruneSessionInterval: 60 * 15,
+    }),
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  }),
+);
 
 app.use("/.well-known", discoveryRouter);
 app.use("/auth", authRouter);

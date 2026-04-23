@@ -6,3 +6,9 @@ export const validate =
     req.body = schema.parse(req.body);
     next();
   };
+
+export const validateQuery =
+  (schema: ZodSchema) => (req: Request, _res: Response, next: NextFunction) => {
+    schema.parse(req.query);
+    next();
+  };
