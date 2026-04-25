@@ -10,6 +10,10 @@ apiClient.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
+    if (original.url?.includes("/auth/logout")) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true;
 
