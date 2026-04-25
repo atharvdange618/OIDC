@@ -1,5 +1,5 @@
 ### Register - happy path
-POST http://localhost:4000/auth/register
+POST http://localhost:4000/auth/api/register
 Content-Type: application/json
 
 {
@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### Register - duplicate email (should fail with 409)
-POST http://localhost:4000/auth/register
+POST http://localhost:4000/auth/api/register
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### Register - invalid email (should fail with 400)
-POST http://localhost:4000/auth/register
+POST http://localhost:4000/auth/api/register
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 }
 
 ### Register - password too short (should fail with 400)
-POST http://localhost:4000/auth/register
+POST http://localhost:4000/auth/api/register
 Content-Type: application/json
 
 {
@@ -43,7 +43,7 @@ Content-Type: application/json
 }
 
 ### Register - missing firstName (should fail with 400)
-POST http://localhost:4000/auth/register
+POST http://localhost:4000/auth/api/register
 Content-Type: application/json
 
 {
@@ -53,7 +53,8 @@ Content-Type: application/json
 }
 
 ### Register - empty body (should fail with 400)
-POST http://localhost:4000/auth/register
+POST http://localhost:4000/auth/api/register
 Content-Type: application/json
 
 {}
+

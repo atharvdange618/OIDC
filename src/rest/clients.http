@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "name": "Demo App",
-    "redirectUris": ["http://localhost:3000/callback"],
+    "redirectUris": ["http://localhost:3000/api/auth/callback"],
     "allowedScopes": ["openid", "profile", "email"],
     "appUrl": "http://localhost:3000"
 }
