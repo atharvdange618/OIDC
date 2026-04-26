@@ -2,8 +2,10 @@ import { Request, Response } from "express";
 import { authorizeSchema } from "../validation/authorize.validation";
 import { authorizeService } from "../services/authorize.service";
 import { BadRequestError } from "../errors/AppError";
-import { prisma } from "../lib/prisma";
 import { ISSUER } from "../config/keys";
+import { prisma } from "../lib/prisma";
+import { getActiveClient } from "../lib/oauthClient";
+import { RequestWithValidatedQuery } from "../middleware/validate";
 
 const SCOPE_DESCRIPTIONS: Record<string, string> = {
   openid: "Verify your identity",
@@ -13,7 +15,9 @@ const SCOPE_DESCRIPTIONS: Record<string, string> = {
 
 export class AuthorizeController {
   async authorize(req: Request, res: Response) {
-    const input = authorizeSchema.parse(req.query);
+    const query =
+      (req as RequestWithValidatedQuery).validatedQuery ?? req.query;
+    const input = authorizeSchema.parse(query);
 
     if (!req.session.userId) {
       const params = new URLSearchParams({ ...input });
@@ -21,12 +25,8 @@ export class AuthorizeController {
       return;
     }
 
-    const client = await prisma.oAuthClient.findUnique({
-      where: { clientId: input.client_id },
-    });
-
-    if (!client || !client.isActive)
-      throw new BadRequestError("Invalid client");
+    const client = await getActiveClient(input.client_id);
+    if (!client) throw new BadRequestError("Invalid client");
 
     const user = await prisma.user.findUnique({
       where: { id: req.session.userId },

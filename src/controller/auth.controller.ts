@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { authService } from "../services/auth.service";
 import { RegisterInput, LoginInput } from "../validation/auth.validation";
-import { prisma } from "../lib/prisma";
 import { ISSUER } from "../config/keys";
+import { getActiveClient } from "../lib/oauthClient";
+import { RequestWithValidatedQuery } from "../middleware/validate";
 
 export class AuthController {
   async register(req: Request, res: Response) {
@@ -17,6 +18,8 @@ export class AuthController {
 
   // get
   async loginPage(req: Request, res: Response) {
+    const query = ((req as RequestWithValidatedQuery).validatedQuery ??
+      req.query) as Record<string, string>;
     const {
       client_id,
       redirect_uri,
@@ -24,13 +27,9 @@ export class AuthController {
       state,
       code_challenge,
       code_challenge_method,
-    } = req.query as Record<string, string>;
+    } = query;
 
-    const client = await prisma.oAuthClient.findUnique({
-      where: {
-        clientId: client_id,
-      },
-    });
+    const client = await getActiveClient(client_id);
 
     if (!client) {
       res.status(400).send("Invalid Client");
@@ -63,11 +62,7 @@ export class AuthController {
       code_challenge_method,
     } = req.body;
 
-    const client = await prisma.oAuthClient.findUnique({
-      where: {
-        clientId: client_id,
-      },
-    });
+    const client = await getActiveClient(client_id);
 
     if (!client) {
       res.status(400).send("Invalid Client");
@@ -110,6 +105,8 @@ export class AuthController {
 
   // get
   async registerPage(req: Request, res: Response) {
+    const query = ((req as RequestWithValidatedQuery).validatedQuery ??
+      req.query) as Record<string, string>;
     const {
       client_id,
       redirect_uri,
@@ -117,13 +114,9 @@ export class AuthController {
       state,
       code_challenge,
       code_challenge_method,
-    } = req.query as Record<string, string>;
+    } = query;
 
-    const client = await prisma.oAuthClient.findUnique({
-      where: {
-        clientId: client_id,
-      },
-    });
+    const client = await getActiveClient(client_id);
 
     if (!client) {
       res.status(400).send("Invalid client");
@@ -158,9 +151,7 @@ export class AuthController {
       code_challenge_method,
     } = req.body;
 
-    const client = await prisma.oAuthClient.findUnique({
-      where: { clientId: client_id },
-    });
+    const client = await getActiveClient(client_id);
     if (!client) {
       res.status(400).send("Invalid client");
       return;
@@ -198,6 +189,17 @@ export class AuthController {
         error: err.message ?? "Registration failed",
       });
     }
+  }
+
+  // post
+  async logout(req: Request, res: Response) {
+    req.session.destroy((err) => {
+      if (err) {
+        res.status(500).json({ error: "Logout failed" });
+        return;
+      }
+      res.json({ ok: true });
+    });
   }
 }
 

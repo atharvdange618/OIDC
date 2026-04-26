@@ -6,15 +6,12 @@ import {
 } from "../errors/AppError";
 import type { AuthorizeInput } from "../validation/authorize.validation";
 import { prisma } from "../lib/prisma";
+import { getActiveClient } from "../lib/oauthClient";
 
 export class AuthorizeService {
   async authorize(input: AuthorizeInput, userId: string) {
-    const client = await prisma.oAuthClient.findUnique({
-      where: { clientId: input.client_id },
-    });
-
-    if (!client || !client.isActive)
-      throw new NotFoundError("Client not found");
+    const client = await getActiveClient(input.client_id);
+    if (!client) throw new NotFoundError("Client not found");
 
     const registeredUris = client.redirectUris as string[];
 

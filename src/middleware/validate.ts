@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
 
+export type RequestWithValidatedQuery = Request & { validatedQuery?: unknown };
+
 export const validate =
   (schema: ZodSchema) => (req: Request, _res: Response, next: NextFunction) => {
     req.body = schema.parse(req.body);
@@ -9,6 +11,6 @@ export const validate =
 
 export const validateQuery =
   (schema: ZodSchema) => (req: Request, _res: Response, next: NextFunction) => {
-    schema.parse(req.query);
+    (req as RequestWithValidatedQuery).validatedQuery = schema.parse(req.query);
     next();
   };
