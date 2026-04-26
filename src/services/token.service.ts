@@ -5,16 +5,12 @@ import { prisma } from "../lib/prisma";
 import { BadRequestError, UnauthorizedError } from "../errors/AppError";
 import { verifyPkce } from "../lib/pkce";
 import { signJwt } from "../lib/jwt";
+import { getActiveClient } from "../lib/oauthClient";
 
 export class TokenService {
   async exchange(input: TokenInput) {
-    const client = await prisma.oAuthClient.findUnique({
-      where: {
-        clientId: input.client_id,
-      },
-    });
-    if (!client || !client.isActive)
-      throw new UnauthorizedError("Invalid client");
+    const client = await getActiveClient(input.client_id);
+    if (!client) throw new UnauthorizedError("Invalid client");
 
     const secretValid = await bcrypt.compare(
       input.client_secret,
@@ -54,13 +50,11 @@ export class TokenService {
     });
 
     const user = authCode.user;
-    const now = Math.floor(Date.now() / 1000);
 
     // ab id_token claims build karenge
     const idTokenPayload: Record<string, unknown> = {
       sub: user.id,
       aud: input.client_id,
-      iat: now,
     };
 
     // ab jo scopes grant kiye hain uske hisab se claims include karna
@@ -84,7 +78,6 @@ export class TokenService {
       sub: user.id,
       aud: input.client_id,
       scope: authCode.scopes.join(" "),
-      iat: now,
     };
     const accessToken = await signJwt(accessTokenPayload, "15m");
     const refreshToken = await this.createRefreshToken(
@@ -103,12 +96,8 @@ export class TokenService {
   }
 
   async refresh(input: RefreshTokenInput) {
-    const client = await prisma.oAuthClient.findUnique({
-      where: { clientId: input.client_id },
-    });
-
-    if (!client || !client.isActive)
-      throw new UnauthorizedError("Invalid client");
+    const client = await getActiveClient(input.client_id);
+    if (!client) throw new UnauthorizedError("Invalid client");
 
     const secretValid = await bcrypt.compare(
       input.client_secret,
@@ -156,14 +145,12 @@ export class TokenService {
     });
 
     const user = stored.user;
-    const now = Math.floor(Date.now() / 1000);
 
     const accessToken = await signJwt(
       {
         sub: user.id,
         aud: input.client_id,
         scope: stored.scopes.join(" "),
-        iat: now,
       },
       "15m",
     );
@@ -177,6 +164,7 @@ export class TokenService {
     return {
       access_token: accessToken,
       refresh_token: newRefreshToken.token,
+      scope: newRefreshToken.scopes.join(" "),
       token_type: "Bearer",
       expires_in: 900,
     };
