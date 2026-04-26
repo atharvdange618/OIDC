@@ -348,7 +348,7 @@ Response:
   "id_token": "...",
   "refresh_token": "...",
   "token_type": "Bearer",
-  "expires_in": 3600
+  "expires_in": 900
 }
 ```
 
