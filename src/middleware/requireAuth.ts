@@ -21,13 +21,20 @@ export const requireAuth = async (
     throw new UnauthorizedError("Missing or invalid Authorization header");
 
   const token = authHeader.split(" ")[1];
-  const payload = await verifyJwt(token);
 
-  req.auth = {
-    sub: payload.sub as string,
-    aud: payload.aud as string,
-    scope: payload.scope as string,
-  };
+  try {
+    const payload = await verifyJwt(token);
 
-  next();
+    req.auth = {
+      sub: payload.sub as string,
+      aud: Array.isArray(payload.aud)
+        ? payload.aud[0]
+        : (payload.aud as string),
+      scope: payload.scope as string,
+    };
+
+    next();
+  } catch {
+    throw new UnauthorizedError("Invalid or expired token");
+  }
 };

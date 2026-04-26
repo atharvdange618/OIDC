@@ -8,6 +8,7 @@ import {
   registerFormSchema,
   oidcParamsSchema,
 } from "../validation/auth.validation";
+import { requireAuth } from "../middleware/requireAuth";
 
 const router = Router();
 
@@ -28,4 +29,5 @@ router.post(
 // API routes
 router.post("/api/register", validate(registerSchema), authController.register);
 router.post("/api/login", validate(loginSchema), authController.login);
+router.post("/api/logout", requireAuth, authController.logout);
 export default router;
