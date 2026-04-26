@@ -4,7 +4,7 @@ import { ISSUER } from "../config/keys";
 
 const router = Router();
 
-router.get("/openid-configuration", async (req: Request, res: Response) => {
+router.get("/openid-configuration", (req: Request, res: Response) => {
   res.json({
     issuer: ISSUER,
     authorization_endpoint: `${ISSUER}/authorize`,
