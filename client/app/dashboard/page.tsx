@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/lib/axios";
-import { useAuthStore } from "@/store/auth.store";
 
 function TokenCard({
   label,
@@ -50,7 +49,6 @@ function UserInfoRow({ label, value }: { label: string; value: string }) {
 
 export default function Dashboard() {
   const router = useRouter();
-  const { user, setUser, setLoading } = useAuthStore();
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -68,7 +66,7 @@ export default function Dashboard() {
   }, []);
 
   const {
-    data: userData,
+    data: user,
     isPending,
     isError,
   } = useQuery({
@@ -78,13 +76,6 @@ export default function Dashboard() {
       return data;
     },
   });
-
-  useEffect(() => {
-    if (userData) {
-      setUser(userData);
-      setLoading(false);
-    }
-  }, [userData, setUser, setLoading]);
 
   const logoutMutation = useMutation({
     mutationFn: () => apiClient.post("/auth/logout"),
@@ -135,7 +126,6 @@ export default function Dashboard() {
 
   return (
     <div className="desktop scanlines min-h-screen px-4 py-6 flex flex-col items-center justify-center">
-      {/* ── Taskbar ─────────────────────────────────────────────── */}
       <div className="fixed bottom-0 left-0 right-0 h-9 bg-retro-surface-dark border-t border-retro-border-dark flex items-center gap-1 px-1 z-100">
         <button className="btn btn-primary pixel text-[9px] px-2.5 py-1 h-7 gap-1.5">
           ⊞ Start
@@ -154,9 +144,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Main Window ─────────────────────────────────────────── */}
       <div className="window animate-in max-w-[860px] mx-auto mb-15">
-        {/* Title bar */}
         <div className="window-titlebar">
           <div className="flex items-center gap-2">
             <span className="text-sm">👤</span>
@@ -169,7 +157,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Menu bar */}
         <div className="border-b border-retro-border px-1 py-0.5 flex gap-0.5 bg-retro-bg">
           {["Session", "Tokens", "Help"].map((m) => (
             <button
@@ -181,11 +168,8 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Body */}
         <div className="window-body px-7 py-6">
-          {/* ── Welcome header ────────────────────────────────── */}
           <div className="flex items-start gap-4 mb-6">
-            {/* Avatar */}
             {user.picture ? (
               <img
                 src={user.picture}
@@ -214,7 +198,6 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* ── User Info Panel ──────────────────────────────── */}
           <div className="mb-6">
             <div className="window mb-0">
               <div className="window-titlebar bg-retro-titlebar-inactive">
@@ -257,7 +240,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ── Session Info ─────────────────────────────────── */}
           <div className="mb-6">
             <div className="window mb-0">
               <div className="window-titlebar bg-retro-titlebar-inactive">
@@ -309,7 +291,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ── How this works ───────────────────────────────── */}
           <div className="bg-retro-surface-dark border border-retro-border p-3">
             <p className="font-retro-sans text-[11px] text-retro-dim leading-relaxed">
               <span className="font-semibold text-retro-text">
@@ -324,7 +305,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Status bar */}
         <div className="statusbar">
           <span className="statusbar-item">IdP: localhost:4000</span>
           <span className="statusbar-item">Client: localhost:3000</span>
