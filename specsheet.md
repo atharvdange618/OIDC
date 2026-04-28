@@ -370,9 +370,22 @@ Returns identity claims for the authenticated user. Requires a valid access toke
 
 Register a new user on the IdP.
 
+> Note: we expose **two variants** of auth endpoints:
+>
+> - **UI (form + redirects)** for the `/authorize` flow: `POST /auth/register` and `POST /auth/login`
+> - **API (JSON)** for programmatic use: `POST /auth/api/register` and `POST /auth/api/login`
+
 ### `POST /auth/login`
 
 Authenticate a user. Returns a session or short-lived cookie used during the `/authorize` consent flow.
+
+### `POST /auth/api/register`
+
+API variant of register (JSON).
+
+### `POST /auth/api/login`
+
+API variant of login (JSON).
 
 ### `POST /clients/register`
 
@@ -507,6 +520,7 @@ This is a POC for learning. It is not:
 Note: ye plan ai se format karwaya hai, likha maine hi hain, soo please verify and think twice before considering it an ai slop, this is best of my efforts, after reading offical spec sheets. kuch doubts honge toh dm me on x(atharvdangedev)
 
 Here are all the spec sheets and important reference docs
+
 - https://openid.net/specs/openid-connect-core-1_0.html (this is open id spec sheet)
 - https://datatracker.ietf.org/doc/html/rfc6749 (oauth 2.0 spec sheet)
 - https://datatracker.ietf.org/doc/html/rfc7636 (pkce ka spec sheet)
