@@ -4,8 +4,10 @@ import { RegisterClientInput } from "../validation/clients.validation";
 
 export class ClientsController {
   async register(req: Request, res: Response) {
+    const developerId = (req as any).auth?.sub ?? (req.session as any)?.userId;
     const result = await clientsService.register(
       req.body as RegisterClientInput,
+      developerId,
     );
     res.status(201).json(result);
   }

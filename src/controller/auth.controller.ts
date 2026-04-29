@@ -43,6 +43,7 @@ export class AuthController {
     res.render("login", {
       issuer: ISSUER,
       clientName: client.name,
+      clientLogo: client.logoUrl,
       client_id,
       redirect_uri,
       scope,
@@ -96,6 +97,7 @@ export class AuthController {
       res.render("login", {
         issuer: ISSUER,
         clientName: client.name,
+        clientLogo: client.logoUrl,
         client_id,
         redirect_uri,
         scope,
@@ -130,6 +132,7 @@ export class AuthController {
     res.render("register", {
       issuer: ISSUER,
       clientName: client.name,
+      clientLogo: client.logoUrl,
       client_id,
       redirect_uri,
       scope,
@@ -184,6 +187,7 @@ export class AuthController {
       res.render("register", {
         issuer: ISSUER,
         clientName: client.name,
+        clientLogo: client.logoUrl,
         client_id,
         redirect_uri,
         scope,

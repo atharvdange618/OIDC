@@ -5,7 +5,7 @@ import { RegisterClientInput } from "../validation/clients.validation";
 import { ConflictError } from "../errors/AppError";
 
 export class ClientsService {
-  async register(data: RegisterClientInput) {
+  async register(data: RegisterClientInput, developerId?: string) {
     const clientSecret = randomBytes(32).toString("hex");
     const clientSecretHash = await bcrypt.hash(clientSecret, 12);
 
@@ -17,6 +17,8 @@ export class ClientsService {
           redirectUris: data.redirectUris,
           allowedScopes: data.allowedScopes,
           appUrl: data.appUrl,
+          logoUrl: data.logoUrl,
+          developerId,
           postLogoutRedirectUris: data.postLogoutRedirectUris ?? [],
         },
         select: {
@@ -27,6 +29,8 @@ export class ClientsService {
           allowedScopes: true,
           postLogoutRedirectUris: true,
           appUrl: true,
+          logoUrl: true,
+          developerId: true,
           createdAt: true,
         },
       });

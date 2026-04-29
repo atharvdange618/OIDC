@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-const SUPPORTED_SCOPES = ["openid", "profile", "email"] as const;
+const SUPPORTED_SCOPES = [
+  "openid",
+  "profile",
+  "email",
+  "phone",
+  "address",
+] as const;
 
 export const registerClientSchema = z.object({
   name: z.string().min(1, "Client name is required"),
@@ -17,6 +23,8 @@ export const registerClientSchema = z.object({
     }),
 
   appUrl: z.string().url("appUrl must be a valid URL").optional(),
+
+  logoUrl: z.string().url("logoUrl must be a valid URL").optional(),
 
   postLogoutRedirectUris: z
     .array(z.string().url("Each post-logout redirect URI must be a valid URL"))
