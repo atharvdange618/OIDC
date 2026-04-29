@@ -14,7 +14,18 @@ model User {
   lastName        String
   passwordHash    String
   profileImageUrl String?
+  phoneNumber     String?
+  phoneVerifiedAt DateTime?
+  dateOfBirth     String? // Format: YYYY-MM-DD
+  gender          String?
+  address         Json? // { formatted, street_address, locality, region, postal_code, country }
+
+  // App-Specific Data
+  publicMetadata  Json? // Visible to the client
+  privateMetadata Json? // Visible only to IdP/backend
+
   emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
   isActive        Boolean   @default(true)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt

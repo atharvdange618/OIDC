@@ -5,6 +5,9 @@ export const registerSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
+  phoneNumber: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  gender: z.string().optional(),
 });
 
 export const loginSchema = z.object({

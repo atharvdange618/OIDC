@@ -34,6 +34,9 @@ export class AuthService {
         passwordHash,
         firstName: data.firstName,
         lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
+        dateOfBirth: data.dateOfBirth,
+        gender: data.gender,
       },
       select: {
         id: true,
@@ -61,6 +64,11 @@ export class AuthService {
     if (!valid) {
       throw new UnauthorizedError("Invalid credentials");
     }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
 
     return {
       userId: user.id,

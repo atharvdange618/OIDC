@@ -141,3 +141,5 @@ vite.config.ts.timestamp-*
 /src/generated/prisma
 
 /src/keys
+
+expansion-plan.md

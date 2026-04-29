@@ -13,7 +13,7 @@ router.get("/openid-configuration", (req: Request, res: Response) => {
     jwks_uri: `${ISSUER}/.well-known/jwks.json`,
     end_session_endpoint: `${ISSUER}/auth/logout`,
     introspection_endpoint: `${ISSUER}/token/introspect`,
-    scopes_supported: ["openid", "profile", "email"],
+    scopes_supported: ["openid", "profile", "email", "phone", "address"],
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code", "refresh_token"],
     subject_types_supported: ["public"],
@@ -33,6 +33,12 @@ router.get("/openid-configuration", (req: Request, res: Response) => {
       "given_name",
       "family_name",
       "picture",
+      "birthdate",
+      "gender",
+      "phone_number",
+      "phone_number_verified",
+      "address",
+      "metadata",
     ],
   });
 });

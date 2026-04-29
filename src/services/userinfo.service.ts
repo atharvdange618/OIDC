@@ -23,9 +23,19 @@ export class UserinfoService {
     if (scopes.includes("profile")) {
       claims.given_name = user.firstName;
       claims.family_name = user.lastName;
-      if (user.profileImageUrl) {
-        claims.picture = user.profileImageUrl;
-      }
+      if (user.profileImageUrl) claims.picture = user.profileImageUrl;
+      if (user.dateOfBirth) claims.birthdate = user.dateOfBirth;
+      if (user.gender) claims.gender = user.gender;
+      if (user.publicMetadata) claims.metadata = user.publicMetadata;
+    }
+
+    if (scopes.includes("phone")) {
+      if (user.phoneNumber) claims.phone_number = user.phoneNumber;
+      if (user.phoneVerifiedAt) claims.phone_number_verified = true;
+    }
+
+    if (scopes.includes("address") && user.address) {
+      claims.address = user.address;
     }
 
     return claims;
