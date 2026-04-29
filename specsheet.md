@@ -567,6 +567,8 @@ This is a full implementation for learning and reference. It is not:
 
 Note: ye plan ai se format karwaya hai, likha maine hi hain, soo please verify and think twice before considering it an ai slop, this is best of my efforts, after reading offical spec sheets. kuch doubts honge toh dm me on x(atharvdangedev)
 
+Note: one important thing, there are currently some issues in client implementation. soo please do not refer it as a good implementation.
+
 Here are all the spec sheets and important reference docs
 
 - https://openid.net/specs/openid-connect-core-1_0.html (this is open id spec sheet)
