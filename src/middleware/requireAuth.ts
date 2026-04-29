@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { UnauthorizedError } from "../errors/AppError";
+import { AppError, UnauthorizedError } from "../errors/AppError";
 import { verifyJwt } from "../lib/jwt";
+import { getActiveClient } from "../lib/oauthClient";
 
 export interface AuthenticatedRequest extends Request {
   auth?: {
@@ -25,16 +26,26 @@ export const requireAuth = async (
   try {
     const payload = await verifyJwt(token);
 
+    const rawAud = payload.aud;
+    const aud = Array.isArray(rawAud) ? rawAud[0] : (rawAud as string);
+
+    if (!aud) throw new UnauthorizedError("Token missing audience claim");
+
+    const client = await getActiveClient(aud);
+    if (!client)
+      throw new UnauthorizedError(
+        "Token audience is not a valid active client",
+      );
+
     req.auth = {
       sub: payload.sub as string,
-      aud: Array.isArray(payload.aud)
-        ? payload.aud[0]
-        : (payload.aud as string),
+      aud,
       scope: payload.scope as string,
     };
 
     next();
-  } catch {
+  } catch (err) {
+    if (err instanceof AppError) throw err;
     throw new UnauthorizedError("Invalid or expired token");
   }
 };

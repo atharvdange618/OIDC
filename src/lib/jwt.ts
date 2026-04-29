@@ -1,4 +1,10 @@
-import { SignJWT, jwtVerify, importPKCS8, importSPKI } from "jose";
+import {
+  SignJWT,
+  jwtVerify,
+  importPKCS8,
+  importSPKI,
+  errors as JoseErrors,
+} from "jose";
 import { privateKeyPem, publicKeyPem, KEY_ID, ISSUER } from "../config/keys";
 
 export async function signJwt(
@@ -15,11 +21,22 @@ export async function signJwt(
     .sign(privateKey);
 }
 
-export async function verifyJwt(token: string) {
+export async function verifyJwt(
+  token: string,
+  options: { allowExpired?: boolean } = {},
+) {
   const publicKey = await importSPKI(publicKeyPem, "RS256");
-  const { payload } = await jwtVerify(token, publicKey, {
-    issuer: ISSUER,
-    algorithms: ["RS256"],
-  });
-  return payload;
+  try {
+    const { payload } = await jwtVerify(token, publicKey, {
+      issuer: ISSUER,
+      algorithms: ["RS256"],
+    });
+
+    return payload;
+  } catch (err) {
+    if (options.allowExpired && err instanceof JoseErrors.JWTExpired) {
+      return err.payload;
+    }
+    throw err;
+  }
 }
