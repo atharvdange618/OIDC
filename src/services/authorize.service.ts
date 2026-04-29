@@ -54,6 +54,7 @@ export class AuthorizeService {
         expiresAt,
         codeChallenge: input.code_challenge,
         codeChallengeMethod: input.code_challenge_method,
+        nonce: input.nonce,
       },
     });
 

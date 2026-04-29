@@ -52,6 +52,7 @@ export class AuthorizeController {
       state: input.state,
       code_challenge: input.code_challenge,
       code_challenge_method: input.code_challenge_method,
+      nonce: input.nonce ?? null,
       userEmail: user.email,
       scopes: requestedScopes.map((s) => SCOPE_DESCRIPTIONS[s] ?? s),
     });

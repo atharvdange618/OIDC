@@ -57,6 +57,10 @@ export class TokenService {
       aud: input.client_id,
     };
 
+    if (authCode.nonce) {
+      idTokenPayload.nonce = authCode.nonce;
+    }
+
     // ab jo scopes grant kiye hain uske hisab se claims include karna
     if (authCode.scopes.includes("email")) {
       idTokenPayload.email = user.email;
