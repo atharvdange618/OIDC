@@ -49,3 +49,10 @@ export const requireAuth = async (
     throw new UnauthorizedError("Invalid or expired token");
   }
 };
+
+export const requireIdpLogin = (req: Request, res: Response, next: any) => {
+  if (!(req.session as any).userId) {
+    return res.redirect("/dashboard/login");
+  }
+  next();
+};

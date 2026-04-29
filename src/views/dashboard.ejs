@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Dashboard | Identity Provider</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    h1 { margin: 0; font-size: 1.5rem; }
+    h2 { margin-top: 0; font-size: 1.25rem; }
+    .client-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .client-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .client-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .client-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      object-fit: cover;
+      background-color: #f3f4f6;
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #9ca3af;
+    }
+    .client-info h3 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.1rem;
+    }
+    .code-block {
+      background: #f3f4f6;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+      margin-top: 0.25rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn:hover {
+      background: #4338ca;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      color: #374151;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-outline:hover {
+      background: #f9fafb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Developer Dashboard</h1>
+        <p style="margin: 0.25rem 0 0 0; color: #6b7280;">Welcome back, <%= user.firstName %> <%= user.lastName %></p>
+      </div>
+      <div>
+        <a href="/dashboard/logout" class="btn btn-outline" style="margin-right: 0.5rem;">Logout</a>
+      </div>
+    </header>
+
+    <div class="card">
+      <h2>Your Applications</h2>
+      <% if (clients && clients.length > 0) { %>
+        <div class="client-grid">
+          <% clients.forEach(function(client) { %>
+            <div class="client-card">
+              <div class="client-header">
+                <% if (client.logoUrl) { %>
+                  <img src="<%= client.logoUrl %>" alt="<%= client.name %> logo" class="client-logo">
+                <% } else { %>
+                  <div class="client-logo"><%= client.name.charAt(0).toUpperCase() %></div>
+                <% } %>
+                <div class="client-info">
+                  <h3><%= client.name %></h3>
+                </div>
+              </div>
+              <div style="margin-bottom: 0.5rem;">
+                <label style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">Client ID</label>
+                <div class="code-block"><%= client.id %></div>
+              </div>
+              <div style="margin-bottom: 0.5rem;">
+                <label style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">Redirect URIs</label>
+                <div class="code-block"><%= client.redirectUris.join(', ') %></div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div style="text-align: center; padding: 2rem; border: 1px dashed #d1d5db; border-radius: 6px;">
+          <p style="color: #6b7280;">You haven't registered any applications yet.</p>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="card">
+      <h2>Register New Application</h2>
+      <form id="registerClientForm">
+        <div class="form-group">
+          <label for="name">Application Name</label>
+          <input type="text" id="name" name="name" required placeholder="e.g. My Awesome App">
+        </div>
+        <div class="form-group">
+          <label for="appUrl">Application URL (Optional)</label>
+          <input type="url" id="appUrl" name="appUrl" placeholder="https://example.com">
+        </div>
+        <div class="form-group">
+          <label for="logoUrl">Logo URL (Optional)</label>
+          <input type="url" id="logoUrl" name="logoUrl" placeholder="https://example.com/logo.png">
+        </div>
+        <div class="form-group">
+          <label for="redirectUris">Redirect URIs (comma separated)</label>
+          <input type="text" id="redirectUris" name="redirectUris" required placeholder="http://localhost:3000/api/auth/callback">
+        </div>
+        <div class="form-group">
+          <label for="postLogoutRedirectUris">Post Logout Redirect URIs (comma separated, Optional)</label>
+          <input type="text" id="postLogoutRedirectUris" name="postLogoutRedirectUris" placeholder="http://localhost:3000/">
+        </div>
+        <div class="form-group">
+          <label>Allowed Scopes</label>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="openid" checked disabled> openid (required)
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="profile" checked> profile
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="email" checked> email
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="phone"> phone
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="address"> address
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn">Register Application</button>
+      </form>
+      <div id="registerSuccess" style="display: none; margin-top: 1rem; padding: 1rem; background: #dcfce3; color: #166534; border-radius: 4px;">
+        <strong>Application Registered!</strong><br>
+        Please save your Client Secret. It will not be shown again.<br><br>
+        <div style="margin-bottom: 0.5rem;">
+          <strong>Client ID:</strong>
+          <div style="font-family: monospace; word-break: break-all; background: rgba(255,255,255,0.5); padding: 0.5rem; margin-top: 0.25rem;">
+            <span id="newClientId"></span>
+          </div>
+        </div>
+        <div>
+          <strong>Client Secret:</strong>
+          <div style="font-family: monospace; word-break: break-all; background: rgba(255,255,255,0.5); padding: 0.5rem; margin-top: 0.25rem;">
+            <span id="newClientSecret"></span>
+          </div>
+        </div>
+        <button class="btn" style="margin-top: 1rem;" onclick="window.location.reload()">Refresh Page</button>
+      </div>
+      <div id="registerError" style="display: none; margin-top: 1rem; color: #dc2626;"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registerClientForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const errorDiv = document.getElementById('registerError');
+      const successDiv = document.getElementById('registerSuccess');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registering...';
+      errorDiv.style.display = 'none';
+      
+      try {
+        const redirectUris = document.getElementById('redirectUris').value.split(',').map(u => u.trim()).filter(Boolean);
+        const postLogoutStr = document.getElementById('postLogoutRedirectUris').value;
+        const postLogoutRedirectUris = postLogoutStr ? postLogoutStr.split(',').map(u => u.trim()).filter(Boolean) : undefined;
+        
+        const scopeCheckboxes = Array.from(form.querySelectorAll('input[name="scopes"]:checked'));
+        const allowedScopes = ['openid', ...scopeCheckboxes.map(cb => cb.value).filter(val => val !== 'openid')];
+        
+        const payload = {
+          name: document.getElementById('name').value,
+          appUrl: document.getElementById('appUrl').value || undefined,
+          logoUrl: document.getElementById('logoUrl').value || undefined,
+          redirectUris,
+          postLogoutRedirectUris,
+          allowedScopes
+        };
+        
+        const res = await fetch('/clients/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.message || 'Failed to register client');
+        }
+        
+        form.reset();
+        form.style.display = 'none';
+        successDiv.style.display = 'block';
+        document.getElementById('newClientId').textContent = data.clientId;
+        document.getElementById('newClientSecret').textContent = data.clientSecret;
+        
+      } catch (err) {
+        errorDiv.textContent = err.message;
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register Application';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -34,16 +34,17 @@ export class AuthController {
     } = query;
 
     const client = await getActiveClient(client_id);
-
     if (!client) {
       res.status(400).send("Invalid Client");
       return;
     }
+    const clientName = client.name;
+    const clientLogo = client.logoUrl;
 
     res.render("login", {
       issuer: ISSUER,
-      clientName: client.name,
-      clientLogo: client.logoUrl,
+      clientName,
+      clientLogo,
       client_id,
       redirect_uri,
       scope,
@@ -68,17 +69,20 @@ export class AuthController {
     } = req.body;
 
     const client = await getActiveClient(client_id);
-
     if (!client) {
       res.status(400).send("Invalid Client");
       return;
     }
+    const clientName = client.name;
+    const clientLogo = client.logoUrl;
 
     try {
       const result = await authService.login({
         email,
         password,
       });
+
+      req.session.userId = result.userId;
 
       req.session.userId = result.userId;
 
@@ -96,8 +100,8 @@ export class AuthController {
     } catch (error) {
       res.render("login", {
         issuer: ISSUER,
-        clientName: client.name,
-        clientLogo: client.logoUrl,
+        clientName,
+        clientLogo,
         client_id,
         redirect_uri,
         scope,
@@ -123,16 +127,17 @@ export class AuthController {
     } = query;
 
     const client = await getActiveClient(client_id);
-
     if (!client) {
       res.status(400).send("Invalid client");
       return;
     }
+    const clientName = client.name;
+    const clientLogo = client.logoUrl;
 
     res.render("register", {
       issuer: ISSUER,
-      clientName: client.name,
-      clientLogo: client.logoUrl,
+      clientName,
+      clientLogo,
       client_id,
       redirect_uri,
       scope,
@@ -163,6 +168,8 @@ export class AuthController {
       res.status(400).send("Invalid client");
       return;
     }
+    const clientName = client.name;
+    const clientLogo = client.logoUrl;
 
     try {
       const user = await authService.register({
@@ -171,6 +178,8 @@ export class AuthController {
         firstName,
         lastName,
       });
+      req.session.userId = user.id;
+
       req.session.userId = user.id;
 
       const params = new URLSearchParams({
@@ -186,8 +195,8 @@ export class AuthController {
     } catch (err: any) {
       res.render("register", {
         issuer: ISSUER,
-        clientName: client.name,
-        clientLogo: client.logoUrl,
+        clientName,
+        clientLogo,
         client_id,
         redirect_uri,
         scope,
