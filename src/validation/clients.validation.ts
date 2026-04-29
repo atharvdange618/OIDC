@@ -17,6 +17,10 @@ export const registerClientSchema = z.object({
     }),
 
   appUrl: z.string().url("appUrl must be a valid URL").optional(),
+
+  postLogoutRedirectUris: z
+    .array(z.string().url("Each post-logout redirect URI must be a valid URL"))
+    .optional(),
 });
 
 export type RegisterClientInput = z.infer<typeof registerClientSchema>;

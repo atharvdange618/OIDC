@@ -17,6 +17,7 @@ export class ClientsService {
           redirectUris: data.redirectUris,
           allowedScopes: data.allowedScopes,
           appUrl: data.appUrl,
+          postLogoutRedirectUris: data.postLogoutRedirectUris ?? [],
         },
         select: {
           id: true,
@@ -24,6 +25,7 @@ export class ClientsService {
           name: true,
           redirectUris: true,
           allowedScopes: true,
+          postLogoutRedirectUris: true,
           appUrl: true,
           createdAt: true,
         },
