@@ -7,6 +7,7 @@ import {
   loginFormSchema,
   registerFormSchema,
   oidcParamsSchema,
+  endSessionSchema,
 } from "../validation/auth.validation";
 import { loginLimiter, registerLimiter } from "../middleware/rateLimiter";
 
@@ -31,7 +32,8 @@ router.post(
   authController.registerForm,
 );
 
-router.post("/logout", authController.logout);
+router.get("/logout", validateQuery(endSessionSchema), authController.logout);
+router.post("/logout", validate(endSessionSchema), authController.logout);
 
 // API routes
 router.post(

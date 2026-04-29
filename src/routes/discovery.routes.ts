@@ -11,6 +11,7 @@ router.get("/openid-configuration", (req: Request, res: Response) => {
     token_endpoint: `${ISSUER}/token`,
     userinfo_endpoint: `${ISSUER}/userinfo`,
     jwks_uri: `${ISSUER}/.well-known/jwks.json`,
+    end_session_endpoint: `${ISSUER}/auth/logout`,
     introspection_endpoint: `${ISSUER}/token/introspect`,
     scopes_supported: ["openid", "profile", "email"],
     response_types_supported: ["code"],

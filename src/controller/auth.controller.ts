@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { authService } from "../services/auth.service";
-import { RegisterInput, LoginInput } from "../validation/auth.validation";
+import {
+  RegisterInput,
+  LoginInput,
+  EndSessionInput,
+} from "../validation/auth.validation";
 import { ISSUER } from "../config/keys";
 import { getActiveClient } from "../lib/oauthClient";
 import { RequestWithValidatedQuery } from "../middleware/validate";
@@ -191,14 +195,40 @@ export class AuthController {
     }
   }
 
-  // post
+  // post and get both
   async logout(req: Request, res: Response) {
+    const params = ((req as RequestWithValidatedQuery).validatedQuery ??
+      req.body) as EndSessionInput;
+
+    const { clientId, userId: tokenUserId } =
+      await authService.validateEndSession(params);
+
+    // prefer the userId extracted from id_token_hint; fall back to the
+    // active IdP session so we can still revoke tokens even when no hint
+    // was provided.
+    const userId =
+      tokenUserId ?? ((req.session as any).userId as string | undefined);
+
+    if (userId) {
+      await authService.revokeTokensForLogout(userId, clientId);
+    }
+
     req.session.destroy((err) => {
       if (err) {
-        res.status(500).json({ error: "Logout failed" });
+        console.error("Session destroy error during end_session:", err);
+        // force-clear the cookie so the browser doesn't keep sending a
+        // dead session ID even if the store delete failed.
+        res.clearCookie("connect.sid");
+      }
+
+      if (params.post_logout_redirect_uri) {
+        const url = new URL(params.post_logout_redirect_uri);
+        if (params.state) url.searchParams.set("state", params.state);
+        res.redirect(url.toString());
         return;
       }
-      res.json({ ok: true });
+
+      res.render("logout", { issuer: ISSUER });
     });
   }
 }

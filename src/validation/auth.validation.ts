@@ -21,6 +21,13 @@ export const oidcParamsSchema = z.object({
   code_challenge_method: z.enum(["S256", "plain"]),
 });
 
+export const endSessionSchema = z.object({
+  id_token_hint: z.string().optional(),
+  client_id: z.string().optional(),
+  post_logout_redirect_uri: z.string().url().optional(),
+  state: z.string().optional(),
+});
+
 export const loginFormSchema = loginSchema.merge(oidcParamsSchema);
 
 export const registerFormSchema = registerSchema.merge(oidcParamsSchema);
@@ -30,3 +37,4 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type OidcParams = z.infer<typeof oidcParamsSchema>;
 export type LoginFormInput = z.infer<typeof loginFormSchema>;
 export type RegisterFormInput = z.infer<typeof registerFormSchema>;
+export type EndSessionInput = z.infer<typeof endSessionSchema>;
