@@ -5,6 +5,8 @@ import {
 } from "../validation/token.validation";
 import { tokenService } from "../services/token.service";
 import { BadRequestError } from "../errors/AppError";
+import { IntrospectInput } from "../validation/introspect.validation";
+import { introspectService } from "../services/introspect.service";
 
 export class TokenController {
   async exchange(req: Request, res: Response) {
@@ -28,6 +30,16 @@ export class TokenController {
     }
 
     throw new BadRequestError("Unsupported grant_type");
+  }
+
+  async introspect(req: Request, res: Response) {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+
+    const result = await introspectService.introspect(
+      req.body as IntrospectInput,
+    );
+    res.json(result);
   }
 }
 
