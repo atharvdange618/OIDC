@@ -24,16 +24,17 @@ model User {
 }
 
 model OAuthClient {
-  id               String   @id @default(cuid())
-  name             String
-  clientId         String   @unique @default(cuid())
-  clientSecretHash String
-  redirectUris     Json
-  allowedScopes    String[]
-  appUrl           String?
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                     String   @id @default(cuid())
+  name                   String
+  clientId               String   @unique @default(cuid())
+  clientSecretHash       String
+  redirectUris           Json
+  allowedScopes          String[]
+  appUrl                 String?
+  postLogoutRedirectUris Json?
+  isActive               Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   authCodes     AuthCode[]
   refreshTokens RefreshToken[]
@@ -48,6 +49,7 @@ model AuthCode {
   usedAt              DateTime?
   codeChallenge       String
   codeChallengeMethod String    @default("S256")
+  nonce               String?
   createdAt           DateTime  @default(now())
 
   clientId String
