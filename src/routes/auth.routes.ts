@@ -8,13 +8,18 @@ import {
   registerFormSchema,
   oidcParamsSchema,
 } from "../validation/auth.validation";
-import { requireAuth } from "../middleware/requireAuth";
+import { loginLimiter, registerLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
 
 // UI routes (OIDC consent flow)
 router.get("/login", validateQuery(oidcParamsSchema), authController.loginPage);
-router.post("/login", validate(loginFormSchema), authController.loginForm);
+router.post(
+  "/login",
+  loginLimiter,
+  validate(loginFormSchema),
+  authController.loginForm,
+);
 router.get(
   "/register",
   validateQuery(oidcParamsSchema),
@@ -26,8 +31,19 @@ router.post(
   authController.registerForm,
 );
 
+router.post("/logout", authController.logout);
+
 // API routes
-router.post("/api/register", validate(registerSchema), authController.register);
-router.post("/api/login", validate(loginSchema), authController.login);
-router.post("/api/logout", requireAuth, authController.logout);
+router.post(
+  "/api/register",
+  registerLimiter,
+  validate(registerSchema),
+  authController.register,
+);
+router.post(
+  "/api/login",
+  loginLimiter,
+  validate(loginSchema),
+  authController.login,
+);
 export default router;
