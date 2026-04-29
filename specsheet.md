@@ -139,13 +139,27 @@ model User {
   lastName        String
   passwordHash    String
   profileImageUrl String?
+  phoneNumber     String?
+  phoneVerifiedAt DateTime?
+  dateOfBirth     String? // Format: YYYY-MM-DD
+  gender          String?
+  address         Json? // { formatted, street_address, locality, region, postal_code, country }
+
+  // App-Specific Data
+  publicMetadata  Json? // Visible to the client
+  privateMetadata Json? // Visible only to IdP/backend
+
   emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
   isActive        Boolean   @default(true)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  authCodes       AuthCode[]
-  refreshTokens   RefreshToken[]
+  // Developer Portal Relations
+  developedClients OAuthClient[] @relation("DeveloperClients")
+
+  authCodes     AuthCode[]
+  refreshTokens RefreshToken[]
 }
 ```
 
@@ -162,10 +176,14 @@ model OAuthClient {
   redirectUris           Json     // JSONB array of allowed redirect URIs
   allowedScopes          String[] // e.g. ["openid", "profile", "email"]
   appUrl                 String?
+  logoUrl                String?
   postLogoutRedirectUris String[] // allowlist for RP-Initiated Logout redirect URIs
   isActive               Boolean  @default(true)
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
+
+  developerId String?
+  developer   User?   @relation("DeveloperClients", fields: [developerId], references: [id])
 
   authCodes     AuthCode[]
   refreshTokens RefreshToken[]
@@ -233,6 +251,21 @@ Unlike access tokens (which are usually stateless JWTs), refresh tokens are long
 - **Revoke them** when a user logs out, disconnects an app, or if a token is compromised (`revokedAt`).
 - **Track usage** (`usedAt`) to implement refresh token rotation and detect reuse/replay attacks.
 - **Enforce expiration** (`expiresAt`) securely on the server-side.
+
+### `session`
+
+Stores the user's session data across interactions with the IdP (e.g. tracking intermediate state during the consent flow or developer dashboard sessions).
+
+```prisma
+model Session {
+  sid    String   @id
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], name: "IDX_session_expire")
+  @@map("session")
+}
+```
 
 ---
 
