@@ -1,8 +1,8 @@
-# OIDC Identity Provider (IdP) - POC Spec Sheet
+# OIDC Identity Provider (IdP) - Spec Sheet
 
 > **A from-scratch implementation of an OpenID Connect Identity Provider, built to understand how auth systems actually work under the hood.**
 
-This is a learning-first project. The goal is not to build a production-ready auth service - it's to implement every part of the OIDC Authorization Code Flow manually, so that concepts like token signing, PKCE verification, and the discovery document stop being black boxes.
+This is a full-fledged IdP implementation. The goal is to implement every part of the OIDC Authorization Code Flow manually, so that concepts like token signing, PKCE verification, and the discovery document stop being black boxes. Every implementation decision maps directly to an RFC or spec.
 
 If you've only ever been on the client side of OIDC (using Google, GitHub, etc. as your IdP), this will flip your mental model completely.
 
@@ -26,9 +26,11 @@ Two services:
 - JWKS endpoint for public key exposure
 - OpenID Connect Discovery document
 - Short-lived, one-time-use authorization codes
-- Access tokens + ID tokens
-- Refresh tokens
+- Access tokens + ID tokens + Nonce support
+- Refresh tokens with rotation and reuse detection
 - Userinfo endpoint
+- RP-Initiated Logout with token revocation
+- Token Introspection endpoint
 - Just-in-Time user provisioning (on the client side)
 
 ---
@@ -153,19 +155,20 @@ Represents any application registered to use this IdP. Each client gets a `clien
 
 ```prisma
 model OAuthClient {
-  id               String   @id @default(cuid())
-  name             String
-  clientId         String   @unique @default(cuid())
-  clientSecretHash String
-  redirectUris     Json     // JSONB array of allowed redirect URIs
-  allowedScopes    String[] // e.g. ["openid", "profile", "email"]
-  appUrl           String?
-  isActive         Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                     String   @id @default(cuid())
+  name                   String
+  clientId               String   @unique @default(cuid())
+  clientSecretHash       String
+  redirectUris           Json     // JSONB array of allowed redirect URIs
+  allowedScopes          String[] // e.g. ["openid", "profile", "email"]
+  appUrl                 String?
+  postLogoutRedirectUris String[] // allowlist for RP-Initiated Logout redirect URIs
+  isActive               Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
-  authCodes        AuthCode[]
-  refreshTokens    RefreshToken[]
+  authCodes     AuthCode[]
+  refreshTokens RefreshToken[]
 }
 ```
 
@@ -183,6 +186,7 @@ model AuthCode {
   usedAt              DateTime?
   codeChallenge       String
   codeChallengeMethod String    @default("S256")
+  nonce               String?   // stored if client sends one; echoed in id_token
   createdAt           DateTime  @default(now())
 
   clientId String
@@ -270,12 +274,29 @@ Returns a JSON object describing all endpoints, supported scopes, signing algori
   "token_endpoint": "http://localhost:4000/token",
   "userinfo_endpoint": "http://localhost:4000/userinfo",
   "jwks_uri": "http://localhost:4000/.well-known/jwks.json",
+  "end_session_endpoint": "http://localhost:4000/auth/logout",
+  "introspection_endpoint": "http://localhost:4000/token/introspect",
   "scopes_supported": ["openid", "profile", "email"],
   "response_types_supported": ["code"],
-  "grant_types_supported": ["authorization_code"],
+  "grant_types_supported": ["authorization_code", "refresh_token"],
   "subject_types_supported": ["public"],
   "id_token_signing_alg_values_supported": ["RS256"],
-  "code_challenge_methods_supported": ["S256"]
+  "userinfo_signing_alg_values_supported": ["none"],
+  "token_endpoint_auth_methods_supported": ["client_secret_post"],
+  "code_challenge_methods_supported": ["S256"],
+  "claims_supported": [
+    "sub",
+    "iss",
+    "aud",
+    "iat",
+    "exp",
+    "nonce",
+    "email",
+    "email_verified",
+    "given_name",
+    "family_name",
+    "picture"
+  ]
 }
 ```
 
@@ -387,9 +408,36 @@ API variant of register (JSON).
 
 API variant of login (JSON).
 
+### `GET /auth/logout` · `POST /auth/logout`
+
+RP-Initiated Logout endpoint (`end_session_endpoint`). Terminates the user's IdP session and revokes all active refresh tokens.
+
+Accepted params (query string for GET, body for POST):
+
+```
+id_token_hint            optional – expired tokens accepted; used to identify user + client
+client_id                optional – alternative to id_token_hint for identifying the RP;
+                                    if both are provided, client_id must match id_token_hint.aud
+post_logout_redirect_uri optional – must be pre-registered on the client; requires id_token_hint
+                                    or client_id to be present
+state                    optional – echoed back as a query param in the redirect
+```
+
+Logout logic in order:
+
+1. Validate params via Zod middleware
+2. If `id_token_hint` present → verify signature (expired tokens accepted), extract `sub` (userId) and `aud` (clientId)
+3. If `client_id` present → verify it matches `id_token_hint.aud` when both are given
+4. If `post_logout_redirect_uri` present → verify it's in the client's `postLogoutRedirectUris` allowlist
+5. Revoke all non-revoked refresh tokens for the user (scoped to the specific client if known, global otherwise)
+6. Destroy the IdP session; force-clear `connect.sid` cookie on store failure
+7. Redirect to `post_logout_redirect_uri?state=STATE` or render the logout confirmation page
+
 ### `POST /clients/register`
 
 Register a new OAuth client (app). Returns `client_id` and `client_secret`. The secret is shown once - only the hash is stored.
+
+Request body includes optional `postLogoutRedirectUris: string[]` — the allowlist of URIs the client is permitted to redirect to after logout.
 
 ---
 
@@ -510,10 +558,10 @@ npm run dev
 
 ## What This Is Not
 
-This is a POC for learning. It is not:
+This is a full implementation for learning and reference. It is not:
 
-- Production ready
-- Security audited
+- Hardened for multi-tenant production traffic
+- Formally security audited
 
 ---
 
@@ -528,3 +576,5 @@ Here are all the spec sheets and important reference docs
 - https://openid.net/specs/openid-connect-discovery-1_0.html (jo jwks wla endpoint hai na uska spec sheet)
 - https://datatracker.ietf.org/doc/html/rfc7519 (jwt ka official spec sheet for rabbit hole dwellers)
 - https://datatracker.ietf.org/doc/html/rfc7517 (jwk ka spec sheet)
+- https://datatracker.ietf.org/doc/html/rfc7662#section-2 (token introspection endpoint spec sheet)
+- https://openid.net/specs/openid-connect-rpinitiated-1_0.html (RP-Initiated Logout spec)
