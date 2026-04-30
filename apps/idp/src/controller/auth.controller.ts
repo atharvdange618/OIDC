@@ -84,8 +84,6 @@ export class AuthController {
 
       req.session.userId = result.userId;
 
-      req.session.userId = result.userId;
-
       const params = new URLSearchParams({
         client_id,
         redirect_uri,
@@ -178,8 +176,6 @@ export class AuthController {
         firstName,
         lastName,
       });
-      req.session.userId = user.id;
-
       req.session.userId = user.id;
 
       const params = new URLSearchParams({

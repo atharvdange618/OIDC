@@ -6,6 +6,7 @@ import { BadRequestError, UnauthorizedError } from "../errors/AppError";
 import { verifyPkce } from "../lib/pkce";
 import { signJwt } from "../lib/jwt";
 import { getActiveClient } from "../lib/oauthClient";
+import { authService } from "./auth.service";
 
 export class TokenService {
   async exchange(input: TokenInput) {
@@ -31,8 +32,13 @@ export class TokenService {
     if (authCode.expiresAt < new Date())
       throw new BadRequestError("Authorization code has expired");
 
-    if (authCode.usedAt !== null)
-      throw new BadRequestError("Authorization code has already been used"); // agar prod hota toh saare tokens invoke karna padta as this is considered as a replay attack
+    if (authCode.usedAt !== null) {
+      // Replay attack detected!
+      await authService.revokeTokensForLogout(authCode.userId, input.client_id);
+      throw new BadRequestError(
+        "Authorization code has already been used - all tokens revoked",
+      );
+    }
 
     if (authCode.redirectUri !== input.redirect_uri)
       throw new BadRequestError("redirect_uri mismatch");
@@ -130,14 +136,7 @@ export class TokenService {
     // Detect reuse: if usedAt is set, this token was already rotated
     // This is a sign of token theft, revoke everything for this user+client
     if (stored.usedAt !== null) {
-      await prisma.refreshToken.updateMany({
-        where: {
-          userId: stored.userId,
-          clientId: input.client_id,
-          revokedAt: null,
-        },
-        data: { revokedAt: new Date() },
-      });
+      await authService.revokeTokensForLogout(stored.userId, input.client_id);
       throw new BadRequestError(
         "Refresh token reuse detected - all tokens revoked",
       );
