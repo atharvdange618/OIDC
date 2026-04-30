@@ -1,0 +1,5 @@
+- app pages in dark mode
+- way to manage registered applications
+- show tpa's logo in the consent screen
+- flash consent after 3/6 months or after oauth client changes their scopes
+- convert all the ejs stuff in react
