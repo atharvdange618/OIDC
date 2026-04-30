@@ -11,6 +11,8 @@ const SCOPE_DESCRIPTIONS: Record<string, string> = {
   openid: "Verify your identity",
   profile: "Access your name and profile picture",
   email: "Access your email address",
+  phone: "Access your phone number",
+  address: "Access your physical address",
 };
 
 export class AuthorizeController {
@@ -19,14 +21,37 @@ export class AuthorizeController {
       (req as RequestWithValidatedQuery).validatedQuery ?? req.query;
     const input = authorizeSchema.parse(query);
 
-    if (!req.session.userId) {
-      const params = new URLSearchParams({ ...input });
-      res.redirect(`/auth/login?${params.toString()}`);
-      return;
-    }
-
     const client = await getActiveClient(input.client_id);
     if (!client) throw new BadRequestError("Invalid client");
+
+    const registeredUris = client.redirectUris as string[];
+    if (!registeredUris.includes(input.redirect_uri)) {
+      throw new BadRequestError(
+        "redirect_uri does not match any registered URI",
+      );
+    }
+
+    const requestedScopes = input.scope.split(" ");
+    if (!requestedScopes.includes("openid")) {
+      throw new BadRequestError('scope must include "openid"');
+    }
+
+    const invalidScopes = requestedScopes.filter(
+      (s) => !client.allowedScopes.includes(s),
+    );
+    if (invalidScopes.length > 0) {
+      throw new BadRequestError(
+        `Client is not allowed to request scopes: ${invalidScopes.join(", ")}`,
+      );
+    }
+
+    if (!req.session.userId) {
+      const params = new URLSearchParams({ ...input });
+      const authRoute =
+        input.prompt === "create" ? "/auth/register" : "/auth/login";
+      res.redirect(`${authRoute}?${params.toString()}`);
+      return;
+    }
 
     const user = await prisma.user.findUnique({
       where: { id: req.session.userId },
@@ -36,11 +61,11 @@ export class AuthorizeController {
     if (!user) {
       req.session.destroy(() => {});
       const params = new URLSearchParams({ ...input });
-      res.redirect(`/auth/login?${params.toString()}`);
+      const authRoute =
+        input.prompt === "create" ? "/auth/register" : "/auth/login";
+      res.redirect(`${authRoute}?${params.toString()}`);
       return;
     }
-
-    const requestedScopes = input.scope.split(" ");
 
     res.render("consent", {
       issuer: ISSUER,

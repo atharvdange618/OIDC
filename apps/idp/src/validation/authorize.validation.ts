@@ -9,6 +9,7 @@ export const authorizeSchema = z.object({
   code_challenge: z.string().min(43).max(128),
   code_challenge_method: z.literal("S256"),
   nonce: z.string().optional(),
+  prompt: z.string().optional(),
 });
 
 export type AuthorizeInput = z.infer<typeof authorizeSchema>;

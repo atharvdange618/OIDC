@@ -42,7 +42,7 @@ app.use(
       tableName: "session",
       pruneSessionInterval: 60 * 15,
     }),
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET || "fallback_secret_please_set_in_env",
     resave: false,
     saveUninitialized: false,
     cookie: {
