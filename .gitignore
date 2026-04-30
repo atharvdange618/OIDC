@@ -138,8 +138,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-/src/generated/prisma
+apps/idp/src/generated/prisma
 
-/src/keys
+apps/idp/src/keys
 
 expansion-plan.md
+
+.turbo
