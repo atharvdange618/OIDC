@@ -63,6 +63,7 @@ if (!SESSION_SECRET) throw new Error("SESSION_SECRET is required");
 
 app.use(
   session({
+    name: "idp_session",
     store: new PgSession({
       conString: DATABASE_URL,
       tableName: "session",
