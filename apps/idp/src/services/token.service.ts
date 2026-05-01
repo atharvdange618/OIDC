@@ -32,6 +32,16 @@ export class TokenService {
     if (authCode.expiresAt < new Date())
       throw new BadRequestError("Authorization code has expired");
 
+    if (authCode.redirectUri !== input.redirect_uri)
+      throw new BadRequestError("redirect_uri mismatch");
+
+    if (authCode.clientId !== input.client_id)
+      throw new UnauthorizedError("Client mismatch");
+
+    const pkceValid = verifyPkce(input.code_verifier, authCode.codeChallenge);
+
+    if (!pkceValid) throw new BadRequestError("PKCE verification failed");
+
     const updated = await prisma.authCode.updateMany({
       where: { code: input.code, usedAt: null },
       data: { usedAt: new Date() },
@@ -43,16 +53,6 @@ export class TokenService {
         "Authorization code already used - all tokens revoked",
       );
     }
-
-    if (authCode.redirectUri !== input.redirect_uri)
-      throw new BadRequestError("redirect_uri mismatch");
-
-    if (authCode.clientId !== input.client_id)
-      throw new UnauthorizedError("Client mismatch");
-
-    const pkceValid = verifyPkce(input.code_verifier, authCode.codeChallenge);
-
-    if (!pkceValid) throw new BadRequestError("PKCE verification failed");
 
     const user = authCode.user;
 
