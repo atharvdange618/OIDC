@@ -65,20 +65,34 @@ IdP checks: does this user exist?
      no   |   yes
      |         |
      v         v
-IdP login    Show consent screen
+IdP login    Check existing consent
 screen            |
-     |       user rejects
-     |            |
-     |            v
-     |        Redirect back with error
-     |
+     |     consent valid + covers scopes?
+     |          |
+     |     yes  |  no
+     |     |         |
+     |     v         v
+     |  Skip UI   Show consent screen
+     |  (auto-approve)    |
+     |     |         user rejects
+     |     |              |
+     |     |              v
+     |     |         Redirect back with error
+     |     |
      v (user logs in)
      |
-     +---------> Show consent screen
+     +---------> Check existing consent
                       |
-                 user approves
+              consent valid + covers scopes?
                       |
-                      v
+                 yes  |  no
+                 |         |
+                 v         v
+              Skip UI   Show consent screen
+              (auto-approve)   |
+                          user approves
+                               |
+                               v
           IdP generates auth code
           Stores: code, client_id, user_id,
                   redirect_uri, scopes,
@@ -160,6 +174,7 @@ model User {
 
   authCodes     AuthCode[]
   refreshTokens RefreshToken[]
+  consents      UserConsent[]
 }
 ```
 
@@ -187,6 +202,31 @@ model OAuthClient {
 
   authCodes     AuthCode[]
   refreshTokens RefreshToken[]
+  consents      UserConsent[]
+}
+```
+
+### `user_consents`
+
+Tracks the user's consent decision **per client** so we don't show the consent screen every time. Consent is re-requested when it expires (time-based) or when the client requests scopes the user hasn't granted yet.
+
+```prisma
+model UserConsent {
+  id        String   @id @default(cuid())
+  userId    String
+  clientId  String
+  scopes    String[] // union of granted scopes
+  grantedAt DateTime @default(now())
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User        @relation(fields: [userId], references: [id])
+  client OAuthClient @relation(fields: [clientId], references: [clientId])
+
+  @@unique([userId, clientId])
+  @@index([userId])
+  @@index([clientId])
 }
 ```
 
@@ -274,7 +314,7 @@ model Session {
 This IdP signs JWTs using RSA private/public key pairs instead of a shared secret (HS256). Here's why that matters:
 
 - With HS256, any party that can verify a token also has the ability to forge one (same secret used for both sign + verify)
-- With RS256, the IdP signs with a private key that never leaves the server. Clients verify using the public key exposed at `/jwks.json`. They can verify, but they cannot forge.
+- With RS256, the IdP signs with a private key that never leaves the server. Clients verify using the public key exposed at `/.well-known/jwks.json`. They can verify, but they cannot forge.
 
 **Generating the key pair:**
 
@@ -354,7 +394,10 @@ Exposes the public key so clients can verify JWTs without contacting the IdP for
 
 ### `GET /authorize`
 
-The authorization endpoint. Validates the incoming request and either shows the login/consent UI or redirects back with an error.
+The authorization endpoint. Validates the incoming request, ensures the user is logged in, and then either:
+
+- **Skips the consent UI** and redirects back immediately if there is an existing, unexpired consent that already covers the requested scopes, or
+- Shows the consent UI if consent is missing/expired or the client is requesting new scopes.
 
 Query params:
 
