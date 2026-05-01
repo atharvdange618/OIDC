@@ -70,6 +70,7 @@ export class AuthorizeController {
     res.render("consent", {
       issuer: ISSUER,
       clientName: client.name,
+      clientLogoUrl: client.logoUrl ?? null,
       client_id: input.client_id,
       redirect_uri: input.redirect_uri,
       scope: requestedScopes,

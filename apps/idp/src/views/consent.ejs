@@ -3,14 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Authorize — <%= clientName %></title>
+  <title>Authorize - <%= clientName %></title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
   <div class="w-full max-w-md px-8 py-10 bg-zinc-900 rounded-2xl border border-zinc-800">
     <h1 class="text-2xl font-semibold mb-1">Authorize access</h1>
     <p class="text-zinc-400 text-sm mb-8">
-      <span class="text-white font-medium"><%= clientName %></span>
+      <span class="inline-flex items-center gap-2 align-middle leading-none">
+        <span class="relative inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-zinc-800 border border-zinc-700 overflow-hidden">
+          <% const hasLogo = typeof clientLogoUrl === "string" && clientLogoUrl; %>
+          <% if (hasLogo) { %>
+            <img
+              id="client-logo"
+              src="<%= clientLogoUrl %>"
+              alt="<%= clientName %> logo"
+              class="h-full w-full object-cover"
+              referrerpolicy="no-referrer"
+              onerror="this.style.display='none'; document.getElementById('client-logo-fallback')?.classList.remove('hidden')"
+            />
+          <% } %>
+          <span
+            id="client-logo-fallback"
+            class="<%= hasLogo ? 'hidden' : '' %> text-[11px] font-semibold text-zinc-200 select-none"
+            aria-hidden="true"
+          >
+            <%= (clientName || '').trim().slice(0, 2).toUpperCase() %>
+          </span>
+        </span>
+        <span class="text-white font-medium leading-tight"><%= clientName %></span>
+      </span>
       wants access to your account
     </p>
 
