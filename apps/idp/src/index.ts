@@ -54,13 +54,17 @@ app.use(hpp());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const DATABASE_URL = process.env.DATABASE_URL;
+if (!DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable is required");
+}
 const SESSION_SECRET = process.env.SESSION_SECRET;
 if (!SESSION_SECRET) throw new Error("SESSION_SECRET is required");
 
 app.use(
   session({
     store: new PgSession({
-      conString: process.env.DATABASE_URL,
+      conString: DATABASE_URL,
       tableName: "session",
       pruneSessionInterval: 60 * 15,
     }),
