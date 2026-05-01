@@ -35,6 +35,7 @@ model User {
 
   authCodes     AuthCode[]
   refreshTokens RefreshToken[]
+  consents      UserConsent[]
 }
 
 model OAuthClient {
@@ -56,6 +57,25 @@ model OAuthClient {
 
   authCodes     AuthCode[]
   refreshTokens RefreshToken[]
+  consents      UserConsent[]
+}
+
+model UserConsent {
+  id        String   @id @default(cuid())
+  userId    String
+  clientId  String
+  scopes    String[]
+  grantedAt DateTime @default(now())
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User        @relation(fields: [userId], references: [id])
+  client OAuthClient @relation(fields: [clientId], references: [clientId])
+
+  @@unique([userId, clientId])
+  @@index([userId])
+  @@index([clientId])
 }
 
 model AuthCode {

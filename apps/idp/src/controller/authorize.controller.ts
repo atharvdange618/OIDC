@@ -6,6 +6,7 @@ import { ISSUER } from "../config/keys";
 import { prisma } from "../lib/prisma";
 import { getActiveClient } from "../lib/oauthClient";
 import { RequestWithValidatedQuery } from "../middleware/validate";
+import { consentService } from "../services/consent.service";
 
 const SCOPE_DESCRIPTIONS: Record<string, string> = {
   openid: "Verify your identity",
@@ -67,6 +68,21 @@ export class AuthorizeController {
       return;
     }
 
+    const canSkipConsent = await consentService.shouldSkipConsent({
+      userId: req.session.userId,
+      clientId: input.client_id,
+      requestedScopes,
+    });
+
+    if (canSkipConsent) {
+      const { code, state, redirectUri } = await authorizeService.authorize(
+        input,
+        req.session.userId,
+      );
+      res.redirect(`${redirectUri}?code=${code}&state=${state}`);
+      return;
+    }
+
     res.render("consent", {
       issuer: ISSUER,
       clientName: client.name,
@@ -92,6 +108,12 @@ export class AuthorizeController {
       input,
       req.session.userId,
     );
+
+    await consentService.upsertConsent({
+      userId: req.session.userId,
+      clientId: input.client_id,
+      requestedScopes: input.scope.split(" "),
+    });
 
     res.redirect(`${redirectUri}?code=${code}&state=${state}`);
   }

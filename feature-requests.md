@@ -1,5 +1,5 @@
 - app pages in dark mode
 - way to manage registered applications
-- show tpa's logo in the consent screen
-- flash consent after 3/6 months or after oauth client changes their scopes
+- show tpa's logo in the consent screen (done)
+- flash consent after 3/6 months or after oauth client changes their scopes, otherwise don't flash it everytime user wants to log in. it should be a first time event
 - convert all the ejs stuff in react
