@@ -42,66 +42,72 @@ export class TokenService {
 
     if (!pkceValid) throw new BadRequestError("PKCE verification failed");
 
-    const updated = await prisma.authCode.updateMany({
-      where: { code: input.code, usedAt: null },
-      data: { usedAt: new Date() },
-    });
+    return prisma.$transaction(async (tx) => {
+      const updated = await tx.authCode.updateMany({
+        where: { code: input.code, usedAt: null },
+        data: { usedAt: new Date() },
+      });
 
-    if (updated.count === 0) {
-      await authService.revokeTokensForLogout(authCode.userId, input.client_id);
-      throw new BadRequestError(
-        "Authorization code already used - all tokens revoked",
-      );
-    }
-
-    const user = authCode.user;
-
-    // ab id_token claims build karenge
-    const idTokenPayload: Record<string, unknown> = {
-      sub: user.id,
-      aud: input.client_id,
-    };
-
-    if (authCode.nonce) {
-      idTokenPayload.nonce = authCode.nonce;
-    }
-
-    // ab jo scopes grant kiye hain uske hisab se claims include karna
-    if (authCode.scopes.includes("email")) {
-      idTokenPayload.email = user.email;
-      idTokenPayload.email_verified = user.emailVerifiedAt !== null;
-    }
-
-    if (authCode.scopes.includes("profile")) {
-      idTokenPayload.given_name = user.firstName;
-      idTokenPayload.family_name = user.lastName;
-      if (user.profileImageUrl) {
-        idTokenPayload.picture = user.profileImageUrl;
+      if (updated.count === 0) {
+        await authService.revokeTokensForLogout(
+          authCode.userId,
+          input.client_id,
+        );
+        throw new BadRequestError(
+          "Authorization code already used - all tokens revoked",
+        );
       }
-    }
 
-    // id_token and access_token sign kardo mere bhai
-    const idToken = await signJwt(idTokenPayload, "1h");
+      const user = authCode.user;
 
-    const accessTokenPayload = {
-      sub: user.id,
-      aud: input.client_id,
-      scope: authCode.scopes.join(" "),
-    };
-    const accessToken = await signJwt(accessTokenPayload, "15m");
-    const refreshToken = await this.createRefreshToken(
-      user.id,
-      input.client_id,
-      authCode.scopes,
-    );
+      // ab id_token claims build karenge
+      const idTokenPayload: Record<string, unknown> = {
+        sub: user.id,
+        aud: input.client_id,
+      };
 
-    return {
-      access_token: accessToken,
-      id_token: idToken,
-      refresh_token: refreshToken.token,
-      token_type: "Bearer",
-      expires_in: 900,
-    };
+      if (authCode.nonce) {
+        idTokenPayload.nonce = authCode.nonce;
+      }
+
+      // ab jo scopes grant kiye hain uske hisab se claims include karna
+      if (authCode.scopes.includes("email")) {
+        idTokenPayload.email = user.email;
+        idTokenPayload.email_verified = user.emailVerifiedAt !== null;
+      }
+
+      if (authCode.scopes.includes("profile")) {
+        idTokenPayload.given_name = user.firstName;
+        idTokenPayload.family_name = user.lastName;
+        if (user.profileImageUrl) {
+          idTokenPayload.picture = user.profileImageUrl;
+        }
+      }
+
+      // id_token and access_token sign kardo mere bhai
+      const idToken = await signJwt(idTokenPayload, "1h");
+
+      const accessTokenPayload = {
+        sub: user.id,
+        aud: input.client_id,
+        scope: authCode.scopes.join(" "),
+      };
+      const accessToken = await signJwt(accessTokenPayload, "15m");
+      const refreshToken = await this.createRefreshToken(
+        user.id,
+        input.client_id,
+        authCode.scopes,
+        tx,
+      );
+
+      return {
+        access_token: accessToken,
+        id_token: idToken,
+        refresh_token: refreshToken.token,
+        token_type: "Bearer",
+        expires_in: 900,
+      };
+    });
   }
 
   async refresh(input: RefreshTokenInput) {
@@ -132,53 +138,58 @@ export class TokenService {
     if (stored.revokedAt !== null)
       throw new BadRequestError("Refresh token has been revoked");
 
-    const updated = await prisma.refreshToken.updateMany({
-      where: { token: input.refresh_token, usedAt: null },
-      data: { usedAt: new Date() },
-    });
+    return prisma.$transaction(async (tx) => {
+      const updated = await tx.refreshToken.updateMany({
+        where: { token: input.refresh_token, usedAt: null },
+        data: { usedAt: new Date() },
+      });
 
-    if (updated.count === 0) {
-      await authService.revokeTokensForLogout(stored.userId, input.client_id);
-      throw new BadRequestError(
-        "Refresh token reuse detected - all tokens revoked",
+      if (updated.count === 0) {
+        await authService.revokeTokensForLogout(stored.userId, input.client_id);
+        throw new BadRequestError(
+          "Refresh token reuse detected - all tokens revoked",
+        );
+      }
+
+      const user = stored.user;
+
+      const accessToken = await signJwt(
+        {
+          sub: user.id,
+          aud: input.client_id,
+          scope: stored.scopes.join(" "),
+        },
+        "15m",
       );
-    }
 
-    const user = stored.user;
+      const newRefreshToken = await this.createRefreshToken(
+        user.id,
+        input.client_id,
+        stored.scopes,
+        tx,
+      );
 
-    const accessToken = await signJwt(
-      {
-        sub: user.id,
-        aud: input.client_id,
-        scope: stored.scopes.join(" "),
-      },
-      "15m",
-    );
-
-    const newRefreshToken = await this.createRefreshToken(
-      user.id,
-      input.client_id,
-      stored.scopes,
-    );
-
-    return {
-      access_token: accessToken,
-      refresh_token: newRefreshToken.token,
-      scope: newRefreshToken.scopes.join(" "),
-      token_type: "Bearer",
-      expires_in: 900,
-    };
+      return {
+        access_token: accessToken,
+        refresh_token: newRefreshToken.token,
+        scope: newRefreshToken.scopes.join(" "),
+        token_type: "Bearer",
+        expires_in: 900,
+      };
+    });
   }
 
   private async createRefreshToken(
     userId: string,
     clientId: string,
     scopes: string[],
+    tx?: any,
   ) {
     const token = randomBytes(32).toString("base64url");
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-    return prisma.refreshToken.create({
+    const db = tx || prisma;
+    return db.refreshToken.create({
       data: { token, userId, clientId, scopes, expiresAt },
     });
   }
