@@ -20,9 +20,12 @@ export function authMiddleware(options: AuthMiddlewareOptions = {}) {
       return NextResponse.next();
     }
 
-    const isPublic = publicRoutes.some((route) => {
-      if (route.endsWith("*")) {
-        return pathname.startsWith(route.slice(0, -1));
+    const isPublic = [loginUrl, ...publicRoutes].some((route) => {
+      if (route.includes("*")) {
+        const pattern = route
+          .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+          .replace(/\\\*/g, ".*");
+        return new RegExp(`^${pattern}$`).test(pathname);
       }
       return pathname === route;
     });
