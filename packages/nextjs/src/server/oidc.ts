@@ -2,9 +2,14 @@ import { createRemoteJWKSet, jwtVerify } from "jose";
 
 let oidcConfig: any = null;
 let JWKS: any = null;
+let lastFetchTime: number = 0;
+const CACHE_TTL = 10 * 60 * 1000;
 
 async function getOidcConfig(issuer: string) {
-  if (oidcConfig) return oidcConfig;
+  const now = Date.now();
+  if (oidcConfig && now - lastFetchTime < CACHE_TTL) {
+    return oidcConfig;
+  }
 
   const configUrl = `${issuer.replace(/\/$/, "")}/.well-known/openid-configuration`;
   const res = await fetch(configUrl);
@@ -12,6 +17,8 @@ async function getOidcConfig(issuer: string) {
     throw new Error(`Failed to fetch OIDC configuration from ${configUrl}`);
   }
   oidcConfig = await res.json();
+  lastFetchTime = now;
+  JWKS = null;
   return oidcConfig;
 }
 
