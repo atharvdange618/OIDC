@@ -1,4 +1,4 @@
-import { getSession } from "@torii/nextjs/server";
+import { getSession } from "@kleis-auth/nextjs/server";
 import Link from "next/link";
 
 export default async function DashboardPage() {
@@ -11,7 +11,7 @@ export default async function DashboardPage() {
           Protected Dashboard
         </h1>
         <p className="mb-6 text-zinc-600 dark:text-zinc-400">
-          This page is protected by Torii middleware. Since you can see this,
+          This page is protected by Kleis middleware. Since you can see this,
           the middleware successfully verified your HTTP-only session cookie.
         </p>
 

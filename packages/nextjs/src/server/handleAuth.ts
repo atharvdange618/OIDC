@@ -4,18 +4,18 @@ import { verifyIdToken } from "./oidc";
 import { SESSION_COOKIE, encrypt, decrypt } from "./session";
 import { generateRandomString, generateCodeChallenge } from "./crypto";
 
-const STATE_COOKIE = "torii_state";
-const VERIFIER_COOKIE = "torii_verifier";
+const STATE_COOKIE = "kleis_state";
+const VERIFIER_COOKIE = "kleis_verifier";
 
 function getEnv() {
-  const issuer = process.env.NEXT_PUBLIC_TORII_URL;
-  const clientId = process.env.TORII_CLIENT_ID;
-  const clientSecret = process.env.TORII_CLIENT_SECRET;
+  const issuer = process.env.NEXT_PUBLIC_KLEIS_URL;
+  const clientId = process.env.KLEIS_CLIENT_ID;
+  const clientSecret = process.env.KLEIS_CLIENT_SECRET;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   if (!issuer || !clientId || !clientSecret || !appUrl) {
     throw new Error(
-      "Missing Torii environment variables (NEXT_PUBLIC_TORII_URL, TORII_CLIENT_ID, TORII_CLIENT_SECRET, NEXT_PUBLIC_APP_URL).",
+      "Missing Kleis environment variables (NEXT_PUBLIC_KLEIS_URL, KLEIS_CLIENT_ID, KLEIS_CLIENT_SECRET, NEXT_PUBLIC_APP_URL).",
     );
   }
   return { issuer, clientId, clientSecret, appUrl };
@@ -250,11 +250,11 @@ export function handleAuth(options: HandleAuthOptions = {}) {
       }
 
       return NextResponse.json(
-        { error: "Route not found in Torii handler" },
+        { error: "Route not found in Kleis handler" },
         { status: 404 },
       );
     } catch (error: any) {
-      console.error("[Torii Auth Error]:", error);
+      console.error("[Kleis Auth Error]:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   };

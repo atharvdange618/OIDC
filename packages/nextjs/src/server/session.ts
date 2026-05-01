@@ -1,11 +1,11 @@
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 
-export const SESSION_COOKIE = "torii_session";
+export const SESSION_COOKIE = "kleis_session";
 
 function getSecret() {
-  const secret = process.env.TORII_SECRET;
-  if (!secret) throw new Error("Missing TORII_SECRET environment variable.");
+  const secret = process.env.KLEIS_SECRET;
+  if (!secret) throw new Error("Missing KLEIS_SECRET environment variable.");
   return new TextEncoder().encode(secret);
 }
 

@@ -1,4 +1,4 @@
-import { handleAuth } from "@torii/nextjs/server";
+import { handleAuth } from "@kleis-auth/nextjs/server";
 
 const handler = handleAuth({
   scopes: ["openid", "profile", "email", "phone"],

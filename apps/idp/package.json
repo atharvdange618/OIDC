@@ -1,5 +1,5 @@
 {
-  "name": "torii-idp",
+  "name": "kleis-idp",
   "version": "1.0.0",
   "description": "A from-scratch implementation of an OpenID Connect Identity Provider, built to understand how auth systems actually work under the hood",
   "homepage": "https://github.com/atharvdange618/OIDC#readme",

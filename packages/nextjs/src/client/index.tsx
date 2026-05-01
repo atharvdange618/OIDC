@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-interface ToriiContextType {
+interface KleisContextType {
   user: any | null;
   accessToken: string | null;
   isLoading: boolean;
@@ -17,7 +17,7 @@ interface ToriiContextType {
   setAccessToken: (token: string | null) => void;
 }
 
-const ToriiContext = createContext<ToriiContextType>({
+const KleisContext = createContext<KleisContextType>({
   user: null,
   accessToken: null,
   isLoading: true,
@@ -26,7 +26,7 @@ const ToriiContext = createContext<ToriiContextType>({
   setAccessToken: () => {},
 });
 
-export function ToriiProvider({
+export function KleisProvider({
   children,
   session,
 }: {
@@ -41,7 +41,7 @@ export function ToriiProvider({
   );
 
   return (
-    <ToriiContext.Provider
+    <KleisContext.Provider
       value={{
         user: session?.user || null,
         accessToken,
@@ -52,14 +52,14 @@ export function ToriiProvider({
       }}
     >
       {children}
-    </ToriiContext.Provider>
+    </KleisContext.Provider>
   );
 }
 
 export function useAuth() {
-  const context = useContext(ToriiContext);
+  const context = useContext(KleisContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within a ToriiProvider");
+    throw new Error("useAuth must be used within a KleisProvider");
   }
 
   const {
@@ -106,9 +106,9 @@ export function useAuth() {
 }
 
 export function useUser() {
-  const context = useContext(ToriiContext);
+  const context = useContext(KleisContext);
   if (context === undefined) {
-    throw new Error("useUser must be used within a ToriiProvider");
+    throw new Error("useUser must be used within a KleisProvider");
   }
   return {
     user: context.user,
@@ -121,7 +121,7 @@ export function SignInButton({ children }: { children?: ReactNode }) {
   };
 
   return (
-    <button onClick={handleSignIn} className="torii-signin-button">
+    <button onClick={handleSignIn} className="kleis-signin-button">
       {children || "Sign In"}
     </button>
   );
@@ -133,7 +133,7 @@ export function SignUpButton({ children }: { children?: ReactNode }) {
   };
 
   return (
-    <button onClick={handleSignUp} className="torii-signup-button">
+    <button onClick={handleSignUp} className="kleis-signup-button">
       {children || "Sign Up"}
     </button>
   );
@@ -145,7 +145,7 @@ export function SignOutButton({ children }: { children?: ReactNode }) {
   };
 
   return (
-    <button onClick={handleSignOut} className="torii-signout-button">
+    <button onClick={handleSignOut} className="kleis-signout-button">
       {children || "Sign Out"}
     </button>
   );

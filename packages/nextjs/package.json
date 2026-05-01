@@ -1,7 +1,7 @@
 {
-  "name": "@torii/nextjs",
-  "version": "1.0.0",
-  "description": "The official Next.js SDK for Torii OIDC. Provides middleware, hooks, and server utilities for seamless authentication.",
+  "name": "@kleis-auth/nextjs",
+  "version": "1.0.1",
+  "description": "The official Next.js SDK for Kleis OIDC. Provides middleware, hooks, and server utilities for seamless authentication.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.ts",
@@ -32,13 +32,16 @@
     "oidc",
     "auth",
     "nextjs",
-    "torii",
+    "kleis",
     "pkce",
     "authentication",
     "oauth2"
   ],
   "author": "Atharv Dange",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/atharvdange618/OIDC.git",

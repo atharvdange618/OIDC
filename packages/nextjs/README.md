@@ -1,6 +1,6 @@
-# @torii/nextjs
+# @kleis-auth/nextjs
 
-The official Next.js SDK for **Torii OIDC**. Effortless authentication for Next.js applications using OpenID Connect and PKCE.
+The official Next.js SDK for **Kleis OIDC**. Effortless authentication for Next.js applications using OpenID Connect and PKCE.
 
 ## Features
 
@@ -12,11 +12,11 @@ The official Next.js SDK for **Torii OIDC**. Effortless authentication for Next.
 ## Installation
 
 ```bash
-npm install @torii/nextjs
+npm install @kleis-auth/nextjs
 # or
-pnpm add @torii/nextjs
+pnpm add @kleis-auth/nextjs
 # or
-yarn add @torii/nextjs
+yarn add @kleis-auth/nextjs
 ```
 
 ## Configuration
@@ -24,21 +24,21 @@ yarn add @torii/nextjs
 Add the following environment variables to your `.env.local`:
 
 ```env
-NEXT_PUBLIC_TORII_URL=http://localhost:4000
+NEXT_PUBLIC_KLEIS_URL=http://localhost:4000
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-TORII_CLIENT_ID=your_client_id
-TORII_CLIENT_SECRET=your_client_secret
-TORII_SECRET=your_session_encryption_secret # Use a long random string
+KLEIS_CLIENT_ID=your_client_id
+KLEIS_CLIENT_SECRET=your_client_secret
+KLEIS_SECRET=your_session_encryption_secret # Use a long random string
 ```
 
 ## Setup
 
 ### 1. API Route Handler
 
-Create `app/api/auth/[...torii]/route.ts`:
+Create `app/api/auth/[...kleis]/route.ts`:
 
 ```typescript
-import { handleAuth } from "@torii/nextjs/server";
+import { handleAuth } from "@kleis-auth/nextjs/server";
 
 const handler = handleAuth({
   scopes: ["openid", "profile", "email"],
@@ -52,7 +52,7 @@ export { handler as GET, handler as POST };
 Create `middleware.ts` in your root:
 
 ```typescript
-import { authMiddleware } from "@torii/nextjs/server";
+import { authMiddleware } from "@kleis-auth/nextjs/server";
 
 export default authMiddleware({
   publicRoutes: ["/"],
@@ -65,11 +65,11 @@ export const config = {
 
 ### 3. Root Layout Provider
 
-Wrap your application with `ToriiProvider` in `app/layout.tsx`:
+Wrap your application with `KleisProvider` in `app/layout.tsx`:
 
 ```tsx
-import { ToriiProvider } from "@torii/nextjs";
-import { getSession } from "@torii/nextjs/server";
+import { KleisProvider } from "@kleis-auth/nextjs";
+import { getSession } from "@kleis-auth/nextjs/server";
 
 export default async function RootLayout({ children }) {
   const session = await getSession();
@@ -77,9 +77,9 @@ export default async function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <ToriiProvider session={session}>
+        <KleisProvider session={session}>
           {children}
-        </ToriiProvider>
+        </KleisProvider>
       </body>
     </html>
   );
@@ -93,7 +93,7 @@ export default async function RootLayout({ children }) {
 ```tsx
 "use client";
 
-import { useUser, useAuth, SignInButton, SignOutButton } from "@torii/nextjs";
+import { useUser, useAuth, SignInButton, SignOutButton } from "@kleis-auth/nextjs";
 
 export default function Home() {
   const { user } = useUser();
@@ -116,7 +116,7 @@ export default function Home() {
 ### Server Components
 
 ```tsx
-import { getSession } from "@torii/nextjs/server";
+import { getSession } from "@kleis-auth/nextjs/server";
 
 export default async function Dashboard() {
   const session = await getSession();
@@ -136,7 +136,7 @@ export default async function Dashboard() {
 - `<SignUpButton>`: Triggers the registration flow.
 - `<SignOutButton>`: Clears the session.
 - `<UserButton>`: A pre-built avatar dropdown.
-- `<ToriiProvider>`: Context provider for auth state.
+- `<KleisProvider>`: Context provider for auth state.
 
 ## Hooks
 

@@ -1,10 +1,7 @@
-import { authMiddleware } from "@torii/nextjs/server";
+import { authMiddleware } from "@kleis-auth/nextjs/server";
 
 export default authMiddleware({
-  publicRoutes: [
-    "/",
-    "/api/auth/*",
-  ],
+  publicRoutes: ["/", "/api/auth/*"],
 });
 
 export const config = {

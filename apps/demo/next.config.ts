@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@torii/nextjs"],
+  transpilePackages: ["@kleis-auth/nextjs"],
 };
 
 export default nextConfig;

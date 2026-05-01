@@ -7,7 +7,7 @@ import {
   SignOutButton,
   UserButton,
   SignUpButton,
-} from "@torii/nextjs";
+} from "@kleis-auth/nextjs";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <main className="flex-1 flex flex-col items-center justify-center p-8 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
       <div className="max-w-xl w-full bg-white dark:bg-zinc-900 p-8 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800">
-        <h1 className="text-3xl font-bold mb-6 text-center">Torii SDK Demo</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center">Kleis SDK Demo</h1>
 
         {user ? (
           <div className="space-y-6">
@@ -75,12 +75,12 @@ export default function Home() {
           <div className="space-y-6 text-center">
             <p className="text-zinc-600 dark:text-zinc-400">
               You are currently signed out. Click the button below to test the
-              Torii PKCE flow.
+              Kleis PKCE flow.
             </p>
             <div className="flex justify-center gap-4">
               <SignInButton>
                 <div className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors cursor-pointer inline-flex items-center justify-center">
-                  Sign In with Torii
+                  Sign In with Kleis
                 </div>
               </SignInButton>
               <SignUpButton>
