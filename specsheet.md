@@ -513,7 +513,7 @@ Logout logic in order:
 
 Register a new OAuth client (app). Returns `client_id` and `client_secret`. The secret is shown once - only the hash is stored.
 
-Request body includes optional `postLogoutRedirectUris: string[]` — the allowlist of URIs the client is permitted to redirect to after logout.
+Request body includes optional `postLogoutRedirectUris: string[]` - the allowlist of URIs the client is permitted to redirect to after logout.
 
 ---
 

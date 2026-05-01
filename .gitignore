@@ -143,5 +143,6 @@ apps/idp/src/generated/prisma
 apps/idp/src/keys
 
 expansion-plan.md
+neobrutalist-preset.md
 
 .turbo
