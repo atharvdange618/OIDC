@@ -32,11 +32,15 @@ export class TokenService {
     if (authCode.expiresAt < new Date())
       throw new BadRequestError("Authorization code has expired");
 
-    if (authCode.usedAt !== null) {
-      // Replay attack detected!
+    const updated = await prisma.authCode.updateMany({
+      where: { code: input.code, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+
+    if (updated.count === 0) {
       await authService.revokeTokensForLogout(authCode.userId, input.client_id);
       throw new BadRequestError(
-        "Authorization code has already been used - all tokens revoked",
+        "Authorization code already used - all tokens revoked",
       );
     }
 
@@ -49,11 +53,6 @@ export class TokenService {
     const pkceValid = verifyPkce(input.code_verifier, authCode.codeChallenge);
 
     if (!pkceValid) throw new BadRequestError("PKCE verification failed");
-
-    await prisma.authCode.update({
-      where: { code: input.code },
-      data: { usedAt: new Date() },
-    });
 
     const user = authCode.user;
 
@@ -133,19 +132,17 @@ export class TokenService {
     if (stored.revokedAt !== null)
       throw new BadRequestError("Refresh token has been revoked");
 
-    // Detect reuse: if usedAt is set, this token was already rotated
-    // This is a sign of token theft, revoke everything for this user+client
-    if (stored.usedAt !== null) {
+    const updated = await prisma.refreshToken.updateMany({
+      where: { token: input.refresh_token, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+
+    if (updated.count === 0) {
       await authService.revokeTokensForLogout(stored.userId, input.client_id);
       throw new BadRequestError(
         "Refresh token reuse detected - all tokens revoked",
       );
     }
-
-    await prisma.refreshToken.update({
-      where: { token: input.refresh_token },
-      data: { usedAt: new Date() },
-    });
 
     const user = stored.user;
 

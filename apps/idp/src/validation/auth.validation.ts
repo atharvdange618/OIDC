@@ -21,7 +21,7 @@ export const oidcParamsSchema = z.object({
   scope: z.string().min(1),
   state: z.string().min(1),
   code_challenge: z.string().min(1),
-  code_challenge_method: z.enum(["S256", "plain"]),
+  code_challenge_method: z.literal("S256"),
 });
 
 export const endSessionSchema = z.object({

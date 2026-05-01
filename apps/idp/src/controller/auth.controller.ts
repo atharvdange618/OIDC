@@ -82,6 +82,12 @@ export class AuthController {
         password,
       });
 
+      await new Promise<void>((resolve, reject) => {
+        req.session.regenerate((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
       req.session.userId = result.userId;
 
       const params = new URLSearchParams({

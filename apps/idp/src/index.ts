@@ -35,6 +35,9 @@ app.use(hpp());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const SESSION_SECRET = process.env.SESSION_SECRET;
+if (!SESSION_SECRET) throw new Error("SESSION_SECRET is required");
+
 app.use(
   session({
     store: new PgSession({
@@ -42,7 +45,7 @@ app.use(
       tableName: "session",
       pruneSessionInterval: 60 * 15,
     }),
-    secret: process.env.SESSION_SECRET || "fallback_secret_please_set_in_env",
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
