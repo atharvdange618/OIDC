@@ -1,37 +1,69 @@
 {
   "name": "@torii/nextjs",
   "version": "1.0.0",
+  "description": "The official Next.js SDK for Torii OIDC. Provides middleware, hooks, and server utilities for seamless authentication.",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts",
-      "require": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     },
     "./server": {
-      "types": "./src/server/index.ts",
-      "import": "./src/server/index.ts",
-      "require": "./src/server/index.ts"
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js",
+      "require": "./dist/server/index.js"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
+  "keywords": [
+    "oidc",
+    "auth",
+    "nextjs",
+    "torii",
+    "pkce",
+    "authentication",
+    "oauth2"
+  ],
+  "author": "Atharv Dange",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atharvdange618/OIDC.git",
+    "directory": "packages/nextjs"
+  },
+  "bugs": {
+    "url": "https://github.com/atharvdange618/OIDC/issues"
+  },
+  "homepage": "https://github.com/atharvdange618/OIDC/tree/main/packages/nextjs#readme",
   "dependencies": {
     "jose": "^6.2.2",
     "zod": "^4.3.6"
   },
   "peerDependencies": {
-    "next": "16.2.4"
+    "next": ">=14.0.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
     "typescript": "^5"
   }
 }
