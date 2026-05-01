@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { decodeJwt } from "jose";
+import { verifyIdToken } from "./oidc";
 import { SESSION_COOKIE, encrypt, decrypt } from "./session";
 import { generateRandomString, generateCodeChallenge } from "./crypto";
 
@@ -150,7 +150,7 @@ export function handleAuth(options: HandleAuthOptions = {}) {
 
         const tokens = await tokenRes.json();
 
-        const user = decodeJwt(tokens.id_token);
+        const user = await verifyIdToken(tokens.id_token, issuer, clientId);
         const encryptedSession = await encrypt({
           user,
           accessToken: tokens.access_token,
@@ -222,8 +222,14 @@ export function handleAuth(options: HandleAuthOptions = {}) {
 
         const tokens = await tokenRes.json();
 
+        let user = session.user;
+        if (tokens.id_token) {
+          user = await verifyIdToken(tokens.id_token, issuer, clientId);
+        }
+
         const encryptedSession = await encrypt({
           ...session,
+          user,
           accessToken: tokens.access_token,
           refreshToken: tokens.refresh_token || session.refreshToken,
           idToken: tokens.id_token || session.idToken,
