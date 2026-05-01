@@ -182,6 +182,13 @@ export class AuthController {
         firstName,
         lastName,
       });
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.regenerate((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
       req.session.userId = user.id;
 
       const params = new URLSearchParams({

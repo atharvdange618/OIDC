@@ -14,6 +14,12 @@ export class DashboardController {
 
     try {
       const result = await authService.login({ email, password });
+      await new Promise<void>((resolve, reject) => {
+        req.session.regenerate((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
       (req.session as any).userId = result.userId;
       res.redirect("/dashboard/developer");
     } catch (error: any) {
