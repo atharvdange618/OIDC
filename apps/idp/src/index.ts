@@ -19,6 +19,8 @@ import dashboardRouter from "./routes/dashboard.routes";
 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
+
+app.set("trust proxy", 1);
 const PgSession = connectPgSimple(session);
 
 app.set("view engine", "ejs");
