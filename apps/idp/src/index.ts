@@ -6,6 +6,7 @@ import helmet from "helmet";
 import path from "path";
 import cors from "cors";
 import hpp from "hpp";
+import fs from "fs";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { errorHandler } from "./middleware/errorHandler";
@@ -24,7 +25,21 @@ app.set("trust proxy", 1);
 const PgSession = connectPgSimple(session);
 
 app.set("view engine", "ejs");
-app.set("views", path.join(process.cwd(), "src/views"));
+
+const getViewsPath = () => {
+  const possiblePaths = [
+    path.join(process.cwd(), "src/views"),
+    path.join(process.cwd(), "dist/views"),
+    path.join(process.cwd(), "views"),
+  ];
+
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) return p;
+  }
+  return possiblePaths[0];
+};
+
+app.set("views", getViewsPath());
 
 app.use(
   helmet({
