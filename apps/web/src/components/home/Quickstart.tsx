@@ -38,7 +38,7 @@ export const Quickstart = () => {
 
       <div className="grid gap-12">
         <Card className="flex flex-col lg:flex-row items-stretch hover:translate-x-1 hover:translate-y-1 transition-transform overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-[350px] shrink-0 bg-white dark:bg-neutral-900">
+          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
             <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-gray-700">
               <span className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-black dark:border-gray-700 bg-[#FF9149] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 1
@@ -57,7 +57,7 @@ export const Quickstart = () => {
           </div>
           <div className="flex-1 bg-[#FFECDB]/30 dark:bg-neutral-950 p-8 flex items-center min-w-0">
             <CodeBlock className="w-full shadow-none border-2 bg-[#FFECDB] dark:bg-neutral-900">
-              <code>{`NEXT_PUBLIC_KLEIS_URL=http://localhost:4000
+              <code>{`NEXT_PUBLIC_KLEIS_URL=https://auth.atharvdangedev.in
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 KLEIS_CLIENT_ID=your_client_id
 KLEIS_CLIENT_SECRET=your_client_secret
@@ -67,7 +67,7 @@ KLEIS_SECRET=your_session_encryption_secret`}</code>
         </Card>
 
         <Card className="flex flex-col lg:flex-row items-stretch hover:translate-x-1 hover:translate-y-1 transition-transform overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-[350px] shrink-0 bg-white dark:bg-neutral-900">
+          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
             <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-gray-700">
               <span className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-black dark:border-gray-700 bg-[#60B5FF] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 2
@@ -98,7 +98,7 @@ export { handler as GET, handler as POST };`}</code>
         </Card>
 
         <Card className="flex flex-col lg:flex-row items-stretch hover:translate-x-1 hover:translate-y-1 transition-transform overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-[350px] shrink-0 bg-white dark:bg-neutral-900">
+          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
             <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-gray-700">
               <span className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-black dark:border-gray-700 bg-[#E0FFF1] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 3
