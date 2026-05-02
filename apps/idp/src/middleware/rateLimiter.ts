@@ -6,6 +6,7 @@ export const loginLimiter = rateLimit({
   skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     error: "TOO_MANY_REQUESTS",
     message: "Too many login attempts, please try again later",
@@ -17,6 +18,7 @@ export const registerLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     error: "TOO_MANY_REQUESTS",
     message: "Too many registration attempts, please try again later",
@@ -28,6 +30,7 @@ export const tokenLimiter = rateLimit({
   max: 60,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     error: "TOO_MANY_REQUESTS",
     message: "Too many token requests, please try again later",
