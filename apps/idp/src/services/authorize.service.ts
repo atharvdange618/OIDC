@@ -15,7 +15,13 @@ export class AuthorizeService {
 
     const registeredUris = client.redirectUris as string[];
 
-    if (!registeredUris.includes(input.redirect_uri))
+    const normalizeUri = (uri: string) =>
+      uri.endsWith("/") ? uri.slice(0, -1) : uri;
+    const isUriMatched = registeredUris.some(
+      (uri) => normalizeUri(uri) === normalizeUri(input.redirect_uri),
+    );
+
+    if (!isUriMatched)
       throw new BadRequestError(
         "redirect_uri does not match any registered URI",
       );

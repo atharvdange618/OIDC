@@ -120,7 +120,14 @@ export class AuthService {
 
       const registeredUris = client.postLogoutRedirectUris;
 
-      if (!registeredUris.includes(input.post_logout_redirect_uri)) {
+      const normalizeUri = (uri: string) =>
+        uri.endsWith("/") ? uri.slice(0, -1) : uri;
+      const isRegistered = registeredUris.some(
+        (uri) =>
+          normalizeUri(uri) === normalizeUri(input.post_logout_redirect_uri!),
+      );
+
+      if (!isRegistered) {
         throw new BadRequestError(
           "post_logout_redirect_uri is not registered for this client",
         );
