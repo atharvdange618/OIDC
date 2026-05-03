@@ -46,7 +46,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "https://cdn.tailwindcss.com"],
+        scriptSrc: ["'self'", "https://cdn.tailwindcss.com", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:", "https:"],
         objectSrc: ["'none'"],
