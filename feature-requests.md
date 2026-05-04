@@ -3,3 +3,4 @@
 - show tpa's logo in the consent screen (done)
 - flash consent after 3/6 months or after oauth client changes their scopes, otherwise don't flash it everytime user wants to log in. it should be a first time event (done)
 - convert all the ejs stuff in react
+- way for normal users to regsiter on to our idp so that they can register their applications and manage their personal data on our idp resource servers.
