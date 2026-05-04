@@ -81,7 +81,7 @@ Make a server-to-server POST request to the `/token` endpoint to exchange the au
   "id_token": "...",
   "refresh_token": "...",
   "token_type": "Bearer",
-  "expires_in": 3600
+  "expires_in": 900
 }
 ```
 
