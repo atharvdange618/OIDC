@@ -32,9 +32,25 @@ Content-Type: application/json
 ### Register - invalid redirect URI (should fail with 400)
 POST http://localhost:4000/clients/register
 Content-Type: application/json
+# Note: You must include a valid session cookie for developer authentication
+# Cookie: connect.sid=s%3A...
 
 {
     "name": "Bad URI Client",
     "redirectUris": ["not-a-url"],
     "allowedScopes": ["openid"]
+}
+
+### Update an existing OAuth client
+PUT http://localhost:4000/clients/<client-id>
+Content-Type: application/json
+# Note: You must include a valid session cookie for developer authentication
+# Cookie: connect.sid=s%3A...
+
+{
+    "name": "Updated App Name",
+    "redirectUris": ["http://localhost:3000/api/auth/callback", "http://localhost:3000/callback"],
+    "allowedScopes": ["openid", "profile", "email"],
+    "appUrl": "http://localhost:3000",
+    "logoUrl": "http://localhost:3000/logo.png"
 }

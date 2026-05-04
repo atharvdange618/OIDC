@@ -1,0 +1,46 @@
+### Dashboard Login
+POST http://localhost:4000/dashboard/login
+Content-Type: application/x-www-form-urlencoded
+
+email=atharv@test.com&password=password123
+
+### Dashboard Register
+POST http://localhost:4000/dashboard/register
+Content-Type: application/x-www-form-urlencoded
+
+firstName=Atharv&lastName=Dange&email=atharv2@test.com&password=password123
+
+### Dashboard Logout
+POST http://localhost:4000/dashboard/logout
+# Note: You must include a valid session cookie
+# Cookie: connect.sid=s%3A...
+
+### Get Developer Dashboard (HTML)
+GET http://localhost:4000/dashboard/developer
+# Note: You must include a valid session cookie
+# Cookie: connect.sid=s%3A...
+
+### Get Edit Client Page (HTML)
+GET http://localhost:4000/dashboard/developer/client/<client-id>
+# Note: You must include a valid session cookie
+# Cookie: connect.sid=s%3A...
+
+### Get Account Dashboard (HTML)
+GET http://localhost:4000/dashboard/account
+# Note: You must include a valid session cookie
+# Cookie: connect.sid=s%3A...
+
+### Update Account Data
+PUT http://localhost:4000/dashboard/account
+Content-Type: application/json
+# Note: You must include a valid session cookie
+# Cookie: connect.sid=s%3A...
+
+{
+    "firstName": "Atharv",
+    "lastName": "Dange",
+    "phoneNumber": "+1234567890",
+    "dateOfBirth": "1990-01-01T00:00:00.000Z",
+    "gender": "Male",
+    "address": "123 Test St, Test City, TS 12345"
+}
