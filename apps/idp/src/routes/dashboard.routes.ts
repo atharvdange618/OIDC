@@ -1,13 +1,16 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { dashboardController } from "../controller/dashboard.controller";
-import { loginLimiter } from "../middleware/rateLimiter";
+import { loginLimiter, registerLimiter } from "../middleware/rateLimiter";
 import { requireIdpLogin } from "../middleware/requireAuth";
 
 const router = Router();
 
 router.get("/login", dashboardController.loginPage);
 router.post("/login", loginLimiter, dashboardController.loginForm);
+
+router.get("/register", dashboardController.registerPage);
+router.post("/register", registerLimiter, dashboardController.registerForm);
 router.get("/logout", dashboardController.logout);
 router.post("/logout", dashboardController.logout);
 

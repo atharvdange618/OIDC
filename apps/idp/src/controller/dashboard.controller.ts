@@ -27,6 +27,39 @@ export class DashboardController {
     }
   }
 
+  registerPage(req: Request, res: Response) {
+    if ((req.session as any).userId) {
+      return res.redirect("/dashboard/developer");
+    }
+    res.render("dev-register", { error: null });
+  }
+
+  async registerForm(req: Request, res: Response) {
+    const { email, password, firstName, lastName } = req.body;
+
+    try {
+      const user = await authService.register({
+        email,
+        password,
+        firstName,
+        lastName,
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.regenerate((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+      (req.session as any).userId = user.id;
+      res.redirect("/dashboard/developer");
+    } catch (error: any) {
+      res.render("dev-register", {
+        error: error.message || "Registration failed",
+      });
+    }
+  }
+
   logout(req: Request, res: Response) {
     req.session.destroy((err) => {
       if (err) {
