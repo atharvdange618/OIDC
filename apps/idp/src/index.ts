@@ -97,6 +97,10 @@ app.use(
   }),
 );
 
+app.get("/", (req, res) => {
+  res.redirect("/dashboard/developer");
+});
+
 app.use("/.well-known", discoveryRouter);
 app.use("/auth", authRouter);
 app.use("/clients", clientsRouter);

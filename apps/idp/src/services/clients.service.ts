@@ -56,12 +56,12 @@ export class ClientsService {
   }
 
   async update(
-    clientId: string,
+    id: string,
     developerId: string,
     data: Partial<RegisterClientInput>,
   ) {
     const client = await prisma.oAuthClient.findFirst({
-      where: { clientId, developerId },
+      where: { id, developerId },
     });
 
     if (!client) {
