@@ -24,7 +24,7 @@ yarn add @kleis-auth/nextjs
 Add the following environment variables to your `.env.local`:
 
 ```env
-NEXT_PUBLIC_KLEIS_URL=http://localhost:4000
+NEXT_PUBLIC_KLEIS_URL=https://auth.atharvdangedev.in
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 KLEIS_CLIENT_ID=your_client_id
 KLEIS_CLIENT_SECRET=your_client_secret
@@ -77,9 +77,7 @@ export default async function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <KleisProvider session={session}>
-          {children}
-        </KleisProvider>
+        <KleisProvider session={session}>{children}</KleisProvider>
       </body>
     </html>
   );
@@ -93,7 +91,12 @@ export default async function RootLayout({ children }) {
 ```tsx
 "use client";
 
-import { useUser, useAuth, SignInButton, SignOutButton } from "@kleis-auth/nextjs";
+import {
+  useUser,
+  useAuth,
+  SignInButton,
+  SignOutButton,
+} from "@kleis-auth/nextjs";
 
 export default function Home() {
   const { user } = useUser();
@@ -120,7 +123,7 @@ import { getSession } from "@kleis-auth/nextjs/server";
 
 export default async function Dashboard() {
   const session = await getSession();
-  
+
   return (
     <div>
       <h1>Protected Dashboard</h1>

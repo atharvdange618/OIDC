@@ -342,13 +342,13 @@ Returns a JSON object describing all endpoints, supported scopes, signing algori
 
 ```json
 {
-  "issuer": "http://localhost:4000",
-  "authorization_endpoint": "http://localhost:4000/authorize",
-  "token_endpoint": "http://localhost:4000/token",
-  "userinfo_endpoint": "http://localhost:4000/userinfo",
-  "jwks_uri": "http://localhost:4000/.well-known/jwks.json",
-  "end_session_endpoint": "http://localhost:4000/auth/logout",
-  "introspection_endpoint": "http://localhost:4000/token/introspect",
+  "issuer": "https://auth.atharvdangedev.in",
+  "authorization_endpoint": "https://auth.atharvdangedev.in/authorize",
+  "token_endpoint": "https://auth.atharvdangedev.in/token",
+  "userinfo_endpoint": "https://auth.atharvdangedev.in/userinfo",
+  "jwks_uri": "https://auth.atharvdangedev.in/.well-known/jwks.json",
+  "end_session_endpoint": "https://auth.atharvdangedev.in/auth/logout",
+  "introspection_endpoint": "https://auth.atharvdangedev.in/token/introspect",
   "scopes_supported": ["openid", "profile", "email"],
   "response_types_supported": ["code"],
   "grant_types_supported": ["authorization_code", "refresh_token"],
@@ -523,7 +523,7 @@ The id_token is a signed JWT. Its payload looks like:
 
 ```json
 {
-  "iss": "http://localhost:4000",
+  "iss": "https://auth.atharvdangedev.in",
   "sub": "user_cuid",
   "aud": "client_id",
   "iat": 1713500000,

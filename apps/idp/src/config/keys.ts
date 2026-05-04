@@ -41,5 +41,5 @@ const privateKeyPem = getPrivateKey();
 const publicKeyPem = getPublicKey();
 
 export const KEY_ID = process.env.KEY_ID ?? "key-1";
-export const ISSUER = process.env.ISSUER ?? "http://localhost:4000";
+export const ISSUER = process.env.ISSUER ?? "https://auth.atharvdangedev.in";
 export { privateKeyPem, publicKeyPem };
