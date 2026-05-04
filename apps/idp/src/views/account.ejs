@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account | Identity Provider</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    h1 { margin: 0; font-size: 1.5rem; }
+    h2 { margin-top: 0; font-size: 1.25rem; margin-bottom: 1rem; }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    input[type="text"], input[type="url"], input[type="date"], input[type="tel"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      box-sizing: border-box;
+      background: white;
+    }
+    .btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn:hover {
+      background: #4338ca;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      color: #374151;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-outline:hover {
+      background: #f9fafb;
+    }
+    .flex-row {
+      display: flex;
+      gap: 1rem;
+    }
+    .flex-1 {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>My Account</h1>
+      </div>
+      <div>
+        <a href="/dashboard/developer" class="btn btn-outline" style="margin-right: 0.5rem;">Developer Dashboard</a>
+        <a href="/dashboard/logout" class="btn btn-outline" style="margin-right: 0.5rem;">Logout</a>
+      </div>
+    </header>
+
+    <div class="card">
+      <h2>Profile Details</h2>
+      <form id="updateProfileForm">
+        <div class="flex-row">
+          <div class="form-group flex-1">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required value="<%= user.firstName %>">
+          </div>
+          <div class="form-group flex-1">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required value="<%= user.lastName %>">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" id="email" value="<%= user.email %>" disabled style="background: #f3f4f6;">
+        </div>
+
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number</label>
+          <input type="tel" id="phoneNumber" name="phoneNumber" value="<%= user.phoneNumber || '' %>" placeholder="+1234567890">
+        </div>
+
+        <div class="flex-row">
+          <div class="form-group flex-1">
+            <label for="dateOfBirth">Date of Birth</label>
+            <input type="date" id="dateOfBirth" name="dateOfBirth" value="<%= user.dateOfBirth || '' %>">
+          </div>
+          <div class="form-group flex-1">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option value="">Prefer not to say</option>
+              <option value="male" <%= user.gender === 'male' ? 'selected' : '' %>>Male</option>
+              <option value="female" <%= user.gender === 'female' ? 'selected' : '' %>>Female</option>
+              <option value="other" <%= user.gender === 'other' ? 'selected' : '' %>>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="profileImageUrl">Profile Image URL</label>
+          <input type="url" id="profileImageUrl" name="profileImageUrl" value="<%= user.profileImageUrl || '' %>" placeholder="https://example.com/avatar.jpg">
+        </div>
+
+        <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Address</h3>
+        
+        <% const address = user.address || {}; %>
+        
+        <div class="form-group">
+          <label for="street_address">Street Address</label>
+          <input type="text" id="street_address" name="street_address" value="<%= address.street_address || '' %>">
+        </div>
+        
+        <div class="flex-row">
+          <div class="form-group flex-1">
+            <label for="locality">City / Locality</label>
+            <input type="text" id="locality" name="locality" value="<%= address.locality || '' %>">
+          </div>
+          <div class="form-group flex-1">
+            <label for="region">State / Region</label>
+            <input type="text" id="region" name="region" value="<%= address.region || '' %>">
+          </div>
+        </div>
+        
+        <div class="flex-row">
+          <div class="form-group flex-1">
+            <label for="postal_code">Postal Code</label>
+            <input type="text" id="postal_code" name="postal_code" value="<%= address.postal_code || '' %>">
+          </div>
+          <div class="form-group flex-1">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" value="<%= address.country || '' %>">
+          </div>
+        </div>
+
+        <button type="submit" class="btn" style="margin-top: 1rem;">Update Profile</button>
+      </form>
+      <div id="updateSuccess" style="display: none; margin-top: 1rem; padding: 1rem; background: #dcfce3; color: #166534; border-radius: 4px;">
+        <strong>Profile Updated Successfully!</strong>
+      </div>
+      <div id="updateError" style="display: none; margin-top: 1rem; color: #dc2626;"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('updateProfileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const errorDiv = document.getElementById('updateError');
+      const successDiv = document.getElementById('updateSuccess');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Updating...';
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+      
+      try {
+        const payload = {
+          firstName: document.getElementById('firstName').value,
+          lastName: document.getElementById('lastName').value,
+          phoneNumber: document.getElementById('phoneNumber').value || undefined,
+          dateOfBirth: document.getElementById('dateOfBirth').value || undefined,
+          gender: document.getElementById('gender').value || undefined,
+          profileImageUrl: document.getElementById('profileImageUrl').value || undefined,
+          address: {
+            street_address: document.getElementById('street_address').value || undefined,
+            locality: document.getElementById('locality').value || undefined,
+            region: document.getElementById('region').value || undefined,
+            postal_code: document.getElementById('postal_code').value || undefined,
+            country: document.getElementById('country').value || undefined,
+          }
+        };
+
+        // Clean up empty address object
+        const hasAddressValues = Object.values(payload.address).some(v => v !== undefined && v !== '');
+        if (!hasAddressValues) {
+          payload.address = undefined;
+        } else {
+          // ensure formatted is reasonably populated if we provide parts
+          const parts = [
+            payload.address.street_address,
+            payload.address.locality,
+            payload.address.region,
+            payload.address.postal_code,
+            payload.address.country
+          ].filter(Boolean);
+          if (parts.length > 0) {
+            payload.address.formatted = parts.join(', ');
+          }
+        }
+        
+        const res = await fetch('/dashboard/account', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.message || data.error || 'Failed to update profile');
+        }
+        
+        successDiv.style.display = 'block';
+        setTimeout(() => {
+          successDiv.style.display = 'none';
+        }, 3000);
+        
+      } catch (err) {
+        errorDiv.textContent = err.message;
+        errorDiv.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Update Profile';
+      }
+    });
+  </script>
+</body>
+</html>
