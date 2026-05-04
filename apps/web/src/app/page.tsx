@@ -7,6 +7,13 @@ import { Quickstart } from "@/components/home/Quickstart";
 import { FAQ } from "@/components/home/FAQ";
 import { CTA } from "@/components/home/CTA";
 import { Footer } from "@/components/home/Footer";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Ship Auth Effortlessly",
+  description:
+    "The lightweight OIDC provider and Next.js SDK for modern applications. Secure by default with PKCE and HTTP-only cookies.",
+};
 
 export default function HomePage() {
   return (

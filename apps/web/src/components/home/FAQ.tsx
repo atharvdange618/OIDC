@@ -18,6 +18,10 @@ export const FAQ = () => {
       q: "What databases are supported?",
       a: "Kleis IdP uses Prisma by default, meaning you can use PostgreSQL, MySQL, SQLite, or MongoDB. The SDK is database agnostic.",
     },
+    {
+      q: "Can I use Kleis without Next.js?",
+      a: "Absolutely. While we provide a high-level SDK for Next.js, the Kleis Identity Provider is a standalone OIDC server. You can integrate it with any application using standard OIDC libraries or raw HTTP calls to our endpoints.",
+    },
   ];
 
   return (
