@@ -1,0 +1,33 @@
+# Kleis Full Documentation
+
+Kleis is a comprehensive OIDC solution for the Next.js ecosystem and beyond.
+
+## Next.js SDK Guide
+
+The @kleis-auth/nextjs SDK provides a seamless way to integrate the Kleis Identity Provider (IdP) into Next.js applications (App Router). It abstracts away the complexities of the OIDC Authorization Code Flow with PKCE, session management, and route protection.
+
+### Installation
+pnpm add @kleis-auth/nextjs
+
+### Server Setup
+1. API Route Handler: Create `app/api/auth/[...kleis]/route.ts`.
+2. Route Protection: Use `authMiddleware` in `middleware.ts`.
+
+### Client Setup
+Wrap application in `KleisProvider` in `app/layout.tsx`.
+
+## IDP Integration Guide
+
+The Kleis Auth Server can be used completely independently of any SDK. It implements standard OIDC specifications.
+
+### Endpoints
+- Discovery: `/.well-known/openid-configuration`
+- Authorization: `/authorize`
+- Token: `/token`
+- UserInfo: `/userinfo`
+- Logout: `/auth/logout`
+
+### Authentication Flow (PKCE)
+1. Initiate Authorization Request to `/authorize`.
+2. Handle Callback with `code`.
+3. Exchange Code for Tokens at `/token` using `code_verifier`.

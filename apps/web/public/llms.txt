@@ -1,0 +1,19 @@
+# Kleis
+
+Kleis is a modern, standards-compliant OpenID Connect (OIDC) suite. It consists of an OIDC Identity Provider (IdP) and a Next.js SDK.
+
+## Core Features
+- Standards Compliant: Full OIDC support with Discovery and JWKS endpoints.
+- Edge Ready: Middleware and session logic built to run on the Edge.
+- PKCE Handshake: Secure OAuth flow for single-page applications.
+- Language Agnostic: Use the IdP manually via standard OIDC APIs.
+
+## Documentation
+- [Introduction](https://kleis.atharvdangedev.in/docs)
+- [Next.js SDK Guide](https://kleis.atharvdangedev.in/docs/nextjs-sdk)
+- [IDP Integration Guide](https://kleis.atharvdangedev.in/docs/idp-integration)
+
+## Technical Details
+- Identity Provider: Standalone OIDC server built with Express and Prisma.
+- SDK: Lightweight Next.js integration using `jose` and `zod`.
+- Security: PKCE, HTTP-only cookies, AES-256 session encryption.
