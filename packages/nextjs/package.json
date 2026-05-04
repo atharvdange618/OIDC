@@ -1,6 +1,6 @@
 {
   "name": "@kleis-auth/nextjs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The official Next.js SDK for Kleis OIDC. Provides middleware, hooks, and server utilities for seamless authentication.",
   "type": "module",
   "main": "./dist/index.js",
