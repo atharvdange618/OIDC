@@ -141,7 +141,10 @@
                   <div class="client-logo"><%= client.name.charAt(0).toUpperCase() %></div>
                 <% } %>
                 <div class="client-info">
-                  <h3><%= client.name %></h3>
+                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <h3><%= client.name %></h3>
+                    <a href="/dashboard/developer/client/<%= client.id %>" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">Edit</a>
+                  </div>
                 </div>
               </div>
               <div style="margin-bottom: 0.5rem;">

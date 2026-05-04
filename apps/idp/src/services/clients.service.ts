@@ -54,6 +54,34 @@ export class ClientsService {
       throw err;
     }
   }
+
+  async update(
+    clientId: string,
+    developerId: string,
+    data: Partial<RegisterClientInput>,
+  ) {
+    const client = await prisma.oAuthClient.findFirst({
+      where: { clientId, developerId },
+    });
+
+    if (!client) {
+      throw new Error("Client not found or unauthorized");
+    }
+
+    return prisma.oAuthClient.update({
+      where: { id: client.id },
+      data: {
+        ...(data.name && { name: data.name }),
+        ...(data.redirectUris && { redirectUris: data.redirectUris }),
+        ...(data.allowedScopes && { allowedScopes: data.allowedScopes }),
+        ...(data.appUrl !== undefined && { appUrl: data.appUrl || null }),
+        ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl || null }),
+        ...(data.postLogoutRedirectUris && {
+          postLogoutRedirectUris: data.postLogoutRedirectUris,
+        }),
+      },
+    });
+  }
 }
 
 export const clientsService = new ClientsService();

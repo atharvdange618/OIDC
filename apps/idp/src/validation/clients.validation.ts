@@ -32,3 +32,38 @@ export const registerClientSchema = z.object({
 });
 
 export type RegisterClientInput = z.infer<typeof registerClientSchema>;
+
+export const updateClientSchema = z.object({
+  name: z.string().min(1, "Client name is required").optional(),
+
+  redirectUris: z
+    .array(z.string().url("Each redirect URI must be a valid URL"))
+    .min(1, "At least one redirect URI is required")
+    .optional(),
+
+  allowedScopes: z
+    .array(z.enum(SUPPORTED_SCOPES))
+    .min(1, "At least one scope is required")
+    .refine((scopes) => scopes.includes("openid"), {
+      message: 'Scope "openid" is required',
+    })
+    .optional(),
+
+  appUrl: z
+    .string()
+    .url("appUrl must be a valid URL")
+    .optional()
+    .or(z.literal("")),
+
+  logoUrl: z
+    .string()
+    .url("logoUrl must be a valid URL")
+    .optional()
+    .or(z.literal("")),
+
+  postLogoutRedirectUris: z
+    .array(z.string().url("Each post-logout redirect URI must be a valid URL"))
+    .optional(),
+});
+
+export type UpdateClientInput = z.infer<typeof updateClientSchema>;

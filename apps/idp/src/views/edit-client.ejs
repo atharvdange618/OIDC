@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Application | Identity Provider</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    h1 { margin: 0; font-size: 1.5rem; }
+    h2 { margin-top: 0; font-size: 1.25rem; }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn:hover {
+      background: #4338ca;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      color: #374151;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-outline:hover {
+      background: #f9fafb;
+    }
+    .code-block {
+      background: #f3f4f6;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Edit Application: <%= client.name %></h1>
+      </div>
+      <div>
+        <a href="/dashboard/developer" class="btn btn-outline" style="margin-right: 0.5rem;">Back to Dashboard</a>
+      </div>
+    </header>
+
+    <div class="card">
+      <div style="margin-bottom: 1rem;">
+        <label style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">Client ID</label>
+        <div class="code-block"><%= client.id %></div>
+      </div>
+
+      <form id="editClientForm">
+        <div class="form-group">
+          <label for="name">Application Name</label>
+          <input type="text" id="name" name="name" required value="<%= client.name %>">
+        </div>
+        <div class="form-group">
+          <label for="appUrl">Application URL (Optional)</label>
+          <input type="url" id="appUrl" name="appUrl" value="<%= client.appUrl || '' %>">
+        </div>
+        <div class="form-group">
+          <label for="logoUrl">Logo URL (Optional)</label>
+          <input type="url" id="logoUrl" name="logoUrl" value="<%= client.logoUrl || '' %>">
+        </div>
+        <div class="form-group">
+          <label for="redirectUris">Redirect URIs (comma separated)</label>
+          <input type="text" id="redirectUris" name="redirectUris" required value="<%= client.redirectUris.join(', ') %>">
+        </div>
+        <div class="form-group">
+          <label for="postLogoutRedirectUris">Post Logout Redirect URIs (comma separated, Optional)</label>
+          <input type="text" id="postLogoutRedirectUris" name="postLogoutRedirectUris" value="<%= client.postLogoutRedirectUris ? client.postLogoutRedirectUris.join(', ') : '' %>">
+        </div>
+        <div class="form-group">
+          <label>Allowed Scopes</label>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="openid" checked disabled> openid (required)
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="profile" <%= client.allowedScopes.includes('profile') ? 'checked' : '' %>> profile
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="email" <%= client.allowedScopes.includes('email') ? 'checked' : '' %>> email
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="phone" <%= client.allowedScopes.includes('phone') ? 'checked' : '' %>> phone
+            </label>
+            <label style="font-weight: normal; display: flex; align-items: center; gap: 0.25rem;">
+              <input type="checkbox" name="scopes" value="address" <%= client.allowedScopes.includes('address') ? 'checked' : '' %>> address
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn">Save Changes</button>
+      </form>
+      <div id="editSuccess" style="display: none; margin-top: 1rem; padding: 1rem; background: #dcfce3; color: #166534; border-radius: 4px;">
+        <strong>Application Updated Successfully!</strong>
+      </div>
+      <div id="editError" style="display: none; margin-top: 1rem; color: #dc2626;"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('editClientForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const errorDiv = document.getElementById('editError');
+      const successDiv = document.getElementById('editSuccess');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+
+      try {
+        const redirectUris = document.getElementById('redirectUris').value.split(',').map(u => u.trim()).filter(Boolean);
+        const postLogoutStr = document.getElementById('postLogoutRedirectUris').value;
+        const postLogoutRedirectUris = postLogoutStr ? postLogoutStr.split(',').map(u => u.trim()).filter(Boolean) : [];
+
+        const scopeCheckboxes = Array.from(form.querySelectorAll('input[name="scopes"]:checked'));
+        const allowedScopes = ['openid', ...scopeCheckboxes.map(cb => cb.value).filter(val => val !== 'openid')];
+        
+        const payload = {
+          name: document.getElementById('name').value,
+          appUrl: document.getElementById('appUrl').value || '',
+          logoUrl: document.getElementById('logoUrl').value || '',
+          redirectUris,
+          postLogoutRedirectUris,
+          allowedScopes
+        };
+        
+        const res = await fetch('/clients/<%= client.id %>', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.message || data.error || 'Failed to update client');
+        }
+        
+        successDiv.style.display = 'block';
+        setTimeout(() => {
+          successDiv.style.display = 'none';
+        }, 3000);
+        
+      } catch (err) {
+        errorDiv.textContent = err.message;
+        errorDiv.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Changes';
+      }
+    });
+  </script>
+</body>
+</html>
