@@ -9,10 +9,10 @@ const SUPPORTED_SCOPES = [
 ] as const;
 
 export const registerClientSchema = z.object({
-  name: z.string().min(1, "Client name is required"),
+  name: z.string().min(1, "Client name is required").trim(),
 
   redirectUris: z
-    .array(z.string().url("Each redirect URI must be a valid URL"))
+    .array(z.string().url("Each redirect URI must be a valid URL").trim())
     .min(1, "At least one redirect URI is required"),
 
   allowedScopes: z
@@ -22,22 +22,27 @@ export const registerClientSchema = z.object({
       message: 'Scope "openid" is required',
     }),
 
-  appUrl: z.string().url("appUrl must be a valid URL").optional(),
+  appUrl: z.string().url("appUrl must be a valid URL").trim().optional(),
 
-  logoUrl: z.string().url("logoUrl must be a valid URL").optional(),
+  logoUrl: z.string().url("logoUrl must be a valid URL").trim().optional(),
 
   postLogoutRedirectUris: z
-    .array(z.string().url("Each post-logout redirect URI must be a valid URL"))
+    .array(
+      z
+        .string()
+        .url("Each post-logout redirect URI must be a valid URL")
+        .trim(),
+    )
     .optional(),
 });
 
 export type RegisterClientInput = z.infer<typeof registerClientSchema>;
 
 export const updateClientSchema = z.object({
-  name: z.string().min(1, "Client name is required").optional(),
+  name: z.string().min(1, "Client name is required").trim().optional(),
 
   redirectUris: z
-    .array(z.string().url("Each redirect URI must be a valid URL"))
+    .array(z.string().url("Each redirect URI must be a valid URL").trim())
     .min(1, "At least one redirect URI is required")
     .optional(),
 
@@ -52,17 +57,24 @@ export const updateClientSchema = z.object({
   appUrl: z
     .string()
     .url("appUrl must be a valid URL")
+    .trim()
     .optional()
     .or(z.literal("")),
 
   logoUrl: z
     .string()
     .url("logoUrl must be a valid URL")
+    .trim()
     .optional()
     .or(z.literal("")),
 
   postLogoutRedirectUris: z
-    .array(z.string().url("Each post-logout redirect URI must be a valid URL"))
+    .array(
+      z
+        .string()
+        .url("Each post-logout redirect URI must be a valid URL")
+        .trim(),
+    )
     .optional(),
 });
 

@@ -1,34 +1,34 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().trim().toLowerCase(),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  phoneNumber: z.string().optional(),
-  dateOfBirth: z.string().optional(),
-  gender: z.string().optional(),
+  firstName: z.string().min(1).trim(),
+  lastName: z.string().min(1).trim(),
+  phoneNumber: z.string().trim().optional(),
+  dateOfBirth: z.string().trim().optional(),
+  gender: z.string().trim().optional(),
 });
 
 export const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().trim().toLowerCase(),
   password: z.string().min(1),
 });
 
 export const oidcParamsSchema = z.object({
-  client_id: z.string().min(1),
-  redirect_uri: z.string().url(),
-  scope: z.string().min(1),
-  state: z.string().min(1),
-  code_challenge: z.string().min(1),
+  client_id: z.string().min(1).trim(),
+  redirect_uri: z.string().url().trim(),
+  scope: z.string().min(1).trim(),
+  state: z.string().min(1).trim(),
+  code_challenge: z.string().min(1).trim(),
   code_challenge_method: z.literal("S256"),
 });
 
 export const endSessionSchema = z.object({
-  id_token_hint: z.string().optional(),
-  client_id: z.string().optional(),
-  post_logout_redirect_uri: z.string().url().optional(),
-  state: z.string().optional(),
+  id_token_hint: z.string().trim().optional(),
+  client_id: z.string().trim().optional(),
+  post_logout_redirect_uri: z.string().url().trim().optional(),
+  state: z.string().trim().optional(),
 });
 
 export const loginFormSchema = loginSchema.merge(oidcParamsSchema);

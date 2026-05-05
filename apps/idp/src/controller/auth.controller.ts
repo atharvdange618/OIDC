@@ -270,8 +270,7 @@ export class AuthController {
     // prefer the userId extracted from id_token_hint; fall back to the
     // active IdP session so we can still revoke tokens even when no hint
     // was provided.
-    const userId =
-      tokenUserId ?? ((req.session as any).userId as string | undefined);
+    const userId = tokenUserId ?? req.session.userId;
 
     if (userId) {
       await authService.revokeTokensForLogout(userId, clientId);

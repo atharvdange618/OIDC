@@ -1,8 +1,11 @@
 import { randomBytes } from "crypto";
 import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma";
-import { RegisterClientInput } from "../validation/clients.validation";
-import { ConflictError } from "../errors/AppError";
+import {
+  RegisterClientInput,
+  UpdateClientInput,
+} from "../validation/clients.validation";
+import { ConflictError, NotFoundError } from "../errors/AppError";
 
 export class ClientsService {
   async register(data: RegisterClientInput, developerId?: string) {
@@ -55,17 +58,13 @@ export class ClientsService {
     }
   }
 
-  async update(
-    id: string,
-    developerId: string,
-    data: Partial<RegisterClientInput>,
-  ) {
+  async update(id: string, developerId: string, data: UpdateClientInput) {
     const client = await prisma.oAuthClient.findFirst({
       where: { id, developerId },
     });
 
     if (!client) {
-      throw new Error("Client not found or unauthorized");
+      throw new NotFoundError("Client not found or unauthorized");
     }
 
     return prisma.oAuthClient.update({

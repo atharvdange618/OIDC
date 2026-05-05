@@ -1,8 +1,4 @@
 import { Request, Response } from "express";
-import {
-  refreshTokenSchema,
-  tokenSchema,
-} from "../validation/token.validation";
 import { tokenService } from "../services/token.service";
 import { BadRequestError } from "../errors/AppError";
 import { IntrospectInput } from "../validation/introspect.validation";
@@ -13,17 +9,15 @@ export class TokenController {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
 
-    const { grant_type } = req.body;
+    const input = req.body;
 
-    if (grant_type === "authorization_code") {
-      const input = tokenSchema.parse(req.body);
+    if (input.grant_type === "authorization_code") {
       const tokens = await tokenService.exchange(input);
       res.json(tokens);
       return;
     }
 
-    if (grant_type === "refresh_token") {
-      const input = refreshTokenSchema.parse(req.body);
+    if (input.grant_type === "refresh_token") {
       const tokens = await tokenService.refresh(input);
       res.json(tokens);
       return;

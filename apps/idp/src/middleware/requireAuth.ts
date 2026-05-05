@@ -50,8 +50,12 @@ export const requireAuth = async (
   }
 };
 
-export const requireIdpLogin = (req: Request, res: Response, next: any) => {
-  if (!(req.session as any).userId) {
+export const requireIdpLogin = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!req.session.userId) {
     return res.redirect("/dashboard/login");
   }
   next();

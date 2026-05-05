@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { authorizeSchema } from "../validation/authorize.validation";
+import { AuthorizeInput } from "../validation/authorize.validation";
 import { authorizeService } from "../services/authorize.service";
 import { BadRequestError } from "../errors/AppError";
 import { ISSUER } from "../config/keys";
@@ -21,9 +21,8 @@ const SCOPE_DESCRIPTIONS: Record<string, string> = {
 
 export class AuthorizeController {
   async authorize(req: Request, res: Response) {
-    const query =
-      (req as RequestWithValidatedQuery).validatedQuery ?? req.query;
-    const input = authorizeSchema.parse(query);
+    const input = (req as RequestWithValidatedQuery)
+      .validatedQuery as AuthorizeInput;
 
     const client = await getActiveClient(input.client_id);
     if (!client) throw new BadRequestError("Invalid client");
@@ -124,7 +123,7 @@ export class AuthorizeController {
   async approve(req: Request, res: Response) {
     if (!req.session.userId) throw new BadRequestError("No active session");
 
-    const input = authorizeSchema.parse(req.body);
+    const input = req.body as AuthorizeInput;
     const { code, state, redirectUri } = await authorizeService.authorize(
       input,
       req.session.userId,
