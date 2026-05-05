@@ -1,8 +1,9 @@
 import pino from "pino";
 import path from "path";
+import { env } from "../config/env";
 
-const isDev = process.env.NODE_ENV !== "production";
-const LOG_LEVEL = process.env.LOG_LEVEL ?? (isDev ? "debug" : "info");
+const isDev = env.NODE_ENV !== "production";
+const LOG_LEVEL = env.LOG_LEVEL ?? (isDev ? "debug" : "info");
 
 const LOGS_DIR = path.join(process.cwd(), "logs");
 
@@ -57,7 +58,7 @@ export const logger = pino(
   {
     level: LOG_LEVEL,
     base: {
-      env: process.env.NODE_ENV ?? "development",
+      env: env.NODE_ENV,
       version: process.env.npm_package_version,
     },
     timestamp: pino.stdTimeFunctions.isoTime,

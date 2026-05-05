@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { env } from "./env";
 
 const getPrivateKey = () => {
   const possiblePaths = [
@@ -40,6 +41,6 @@ const getPublicKey = () => {
 const privateKeyPem = getPrivateKey();
 const publicKeyPem = getPublicKey();
 
-export const KEY_ID = process.env.KEY_ID ?? "key-1";
-export const ISSUER = process.env.ISSUER ?? "https://auth.atharvdangedev.in";
+export const KEY_ID = env.KEY_ID;
+export const ISSUER = env.ISSUER;
 export { privateKeyPem, publicKeyPem };

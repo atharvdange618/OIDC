@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
+import { env } from "./config/env";
 
 import express from "express";
 import helmet from "helmet";
@@ -21,7 +22,7 @@ import userinfoRouter from "./routes/userinfo.routes";
 import dashboardRouter from "./routes/dashboard.routes";
 
 const app = express();
-const PORT = process.env.PORT ?? 4000;
+const PORT = env.PORT;
 
 app.set("trust proxy", 1);
 const PgSession = connectPgSimple(session);
@@ -65,7 +66,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.CLIENT_URL ?? "http://localhost:3000",
+    origin: env.CLIENT_URL,
     credentials: true,
   }),
 );
@@ -74,27 +75,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
-const DATABASE_URL = process.env.DATABASE_URL;
-if (!DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is required");
-}
-const SESSION_SECRET = process.env.SESSION_SECRET;
-if (!SESSION_SECRET) throw new Error("SESSION_SECRET is required");
-
 app.use(
   session({
     name: "idp_session",
     store: new PgSession({
-      conString: DATABASE_URL,
+      conString: env.DATABASE_URL,
       tableName: "session",
       pruneSessionInterval: 60 * 15,
     }),
-    secret: SESSION_SECRET,
+    secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000,
     },
   }),
@@ -118,7 +112,7 @@ app.listen(PORT, () => {
   logger.info(
     {
       port: PORT,
-      env: process.env.NODE_ENV ?? "development",
+      env: env.NODE_ENV,
       viewsPath: getViewsPath(),
     },
     "IdP server started",
