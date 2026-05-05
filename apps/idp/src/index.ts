@@ -10,6 +10,8 @@ import fs from "fs";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { errorHandler } from "./middleware/errorHandler";
+import { requestLogger } from "./middleware/requestLogger";
+import { logger } from "./lib/logger";
 import discoveryRouter from "./routes/discovery.routes";
 import authRouter from "./routes/auth.routes";
 import clientsRouter from "./routes/clients.routes";
@@ -70,6 +72,7 @@ app.use(
 app.use(hpp());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
@@ -112,5 +115,12 @@ app.use("/userinfo", userinfoRouter);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`IdP running on http://localhost:${PORT}`);
+  logger.info(
+    {
+      port: PORT,
+      env: process.env.NODE_ENV ?? "development",
+      viewsPath: getViewsPath(),
+    },
+    "IdP server started",
+  );
 });

@@ -7,6 +7,9 @@ import { verifyPkce } from "../lib/pkce";
 import { signJwt } from "../lib/jwt";
 import { getActiveClient } from "../lib/oauthClient";
 import { authService } from "./auth.service";
+import { logger, truncateToken } from "../lib/logger";
+
+const log = logger.child({ module: "token.service" });
 
 export class TokenService {
   async exchange(input: TokenInput) {
@@ -17,7 +20,13 @@ export class TokenService {
       input.client_secret,
       client.clientSecretHash,
     );
-    if (!secretValid) throw new UnauthorizedError("Invalid client credentials");
+    if (!secretValid) {
+      log.warn(
+        { clientId: input.client_id, security: true },
+        "Token exchange rejected - invalid client secret",
+      );
+      throw new UnauthorizedError("Invalid client credentials");
+    }
 
     const authCode = await prisma.authCode.findUnique({
       where: {
@@ -49,6 +58,15 @@ export class TokenService {
       });
 
       if (updated.count === 0) {
+        log.error(
+          {
+            clientId: input.client_id,
+            userId: authCode.userId,
+            codePrefix: truncateToken(input.code),
+            security: true,
+          },
+          "Auth code reuse detected - all tokens revoked",
+        );
         await authService.revokeTokensForLogout(
           authCode.userId,
           input.client_id,
@@ -100,6 +118,16 @@ export class TokenService {
         tx,
       );
 
+      log.info(
+        {
+          userId: user.id,
+          clientId: input.client_id,
+          scope: authCode.scopes.join(" "),
+          accessTokenPrefix: truncateToken(accessToken),
+        },
+        "Tokens issued via authorization code exchange",
+      );
+
       return {
         access_token: accessToken,
         id_token: idToken,
@@ -118,7 +146,13 @@ export class TokenService {
       input.client_secret,
       client.clientSecretHash,
     );
-    if (!secretValid) throw new UnauthorizedError("Invalid client credentials");
+    if (!secretValid) {
+      log.warn(
+        { clientId: input.client_id, security: true },
+        "Token refresh rejected - invalid client secret",
+      );
+      throw new UnauthorizedError("Invalid client credentials");
+    }
 
     const stored = await prisma.refreshToken.findUnique({
       where: { token: input.refresh_token },
@@ -145,6 +179,14 @@ export class TokenService {
       });
 
       if (updated.count === 0) {
+        log.error(
+          {
+            clientId: input.client_id,
+            userId: stored.userId,
+            security: true,
+          },
+          "Refresh token reuse detected - all tokens revoked",
+        );
         await authService.revokeTokensForLogout(stored.userId, input.client_id);
         throw new BadRequestError(
           "Refresh token reuse detected - all tokens revoked",
@@ -167,6 +209,16 @@ export class TokenService {
         input.client_id,
         stored.scopes,
         tx,
+      );
+
+      log.info(
+        {
+          userId: user.id,
+          clientId: input.client_id,
+          scope: stored.scopes.join(" "),
+          accessTokenPrefix: truncateToken(accessToken),
+        },
+        "Access token issued via refresh token",
       );
 
       return {

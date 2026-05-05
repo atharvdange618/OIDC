@@ -7,6 +7,9 @@ import { prisma } from "../lib/prisma";
 import { getActiveClient } from "../lib/oauthClient";
 import { RequestWithValidatedQuery } from "../middleware/validate";
 import { consentService } from "../services/consent.service";
+import { logger, truncateToken } from "../lib/logger";
+
+const log = logger.child({ module: "authorize.controller" });
 
 const SCOPE_DESCRIPTIONS: Record<string, string> = {
   openid: "Verify your identity",
@@ -27,6 +30,14 @@ export class AuthorizeController {
 
     const registeredUris = client.redirectUris as string[];
     if (!registeredUris.includes(input.redirect_uri)) {
+      log.warn(
+        {
+          clientId: input.client_id,
+          providedUri: input.redirect_uri,
+          security: true,
+        },
+        "redirect_uri not registered - possible open-redirect attempt",
+      );
       throw new BadRequestError(
         "redirect_uri does not match any registered URI",
       );
@@ -79,6 +90,16 @@ export class AuthorizeController {
         input,
         req.session.userId,
       );
+      log.info(
+        {
+          userId: req.session.userId,
+          clientId: input.client_id,
+          scope: input.scope,
+          codePrefix: truncateToken(code),
+          consentSkipped: true,
+        },
+        "Auth code issued (consent skipped)",
+      );
       res.redirect(`${redirectUri}?code=${code}&state=${state}`);
       return;
     }
@@ -115,11 +136,28 @@ export class AuthorizeController {
       requestedScopes: input.scope.split(" "),
     });
 
+    log.info(
+      {
+        userId: req.session.userId,
+        clientId: input.client_id,
+        scope: input.scope,
+        codePrefix: truncateToken(code),
+      },
+      "Consent granted - auth code issued",
+    );
+
     res.redirect(`${redirectUri}?code=${code}&state=${state}`);
   }
 
   async deny(req: Request, res: Response) {
-    const { redirect_uri, state } = req.body;
+    const { redirect_uri, state, client_id } = req.body;
+    log.warn(
+      {
+        userId: req.session?.userId,
+        clientId: client_id,
+      },
+      "User denied consent",
+    );
     res.redirect(`${redirect_uri}?error=access_denied&state=${state}`);
   }
 }

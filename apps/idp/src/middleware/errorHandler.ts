@@ -1,6 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import { AppError } from "../errors/AppError";
 import { ZodError } from "zod";
+import { logger } from "../lib/logger";
 
 export const errorHandler = (
   err: Error,
@@ -25,7 +26,15 @@ export const errorHandler = (
     return;
   }
 
-  console.error("Unhandled error:", err);
+  logger.error(
+    {
+      err,
+      method: req.method,
+      url: req.url,
+      requestId: res.getHeader("X-Request-Id"),
+    },
+    "Unhandled error",
+  );
   res.status(500).json({
     error: "INTERNAL_SERVER_ERROR",
     message: "Something went wrong",

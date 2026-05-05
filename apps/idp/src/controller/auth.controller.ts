@@ -8,6 +8,9 @@ import {
 import { ISSUER } from "../config/keys";
 import { getActiveClient } from "../lib/oauthClient";
 import { RequestWithValidatedQuery } from "../middleware/validate";
+import { logger, maskEmail, hashSessionId } from "../lib/logger";
+
+const log = logger.child({ module: "auth.controller" });
 
 export class AuthController {
   async register(req: Request, res: Response) {
@@ -90,6 +93,17 @@ export class AuthController {
       });
       req.session.userId = result.userId;
 
+      log.info(
+        {
+          userId: result.userId,
+          email: maskEmail(email),
+          clientId: client_id,
+          sessionId: hashSessionId(req.session.id),
+          ip: req.ip,
+        },
+        "User login successful",
+      );
+
       const params = new URLSearchParams({
         client_id,
         redirect_uri,
@@ -102,6 +116,15 @@ export class AuthController {
 
       res.redirect(`/authorize?${params.toString()}`);
     } catch (error) {
+      log.warn(
+        {
+          email: maskEmail(email),
+          clientId: client_id,
+          ip: req.ip,
+          reason: "invalid_credentials",
+        },
+        "Login attempt failed",
+      );
       res.render("login", {
         issuer: ISSUER,
         clientName,
@@ -191,6 +214,16 @@ export class AuthController {
       });
       req.session.userId = user.id;
 
+      log.info(
+        {
+          userId: user.id,
+          email: maskEmail(email),
+          clientId: client_id,
+          ip: req.ip,
+        },
+        "User registered successfully",
+      );
+
       const params = new URLSearchParams({
         client_id,
         redirect_uri,
@@ -202,6 +235,15 @@ export class AuthController {
       });
       res.redirect(`/authorize?${params.toString()}`);
     } catch (err: any) {
+      log.warn(
+        {
+          email: maskEmail(email),
+          clientId: client_id,
+          ip: req.ip,
+          reason: err.message,
+        },
+        "User registration failed",
+      );
       res.render("register", {
         issuer: ISSUER,
         clientName,
@@ -235,9 +277,21 @@ export class AuthController {
       await authService.revokeTokensForLogout(userId, clientId);
     }
 
+    log.info(
+      {
+        userId,
+        clientId,
+        sessionId: req.session.id ? hashSessionId(req.session.id) : undefined,
+      },
+      "User logout initiated",
+    );
+
     req.session.destroy((err) => {
       if (err) {
-        console.error("Session destroy error during end_session:", err);
+        log.error(
+          { err, userId },
+          "Session destroy failed during end_session - cookie cleared",
+        );
         // force-clear the cookie so the browser doesn't keep sending a
         // dead session ID even if the store delete failed.
         res.clearCookie("connect.sid");

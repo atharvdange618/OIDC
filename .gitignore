@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+!apps/idp/logs/.gitkeep
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
