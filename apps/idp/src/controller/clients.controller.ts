@@ -4,34 +4,35 @@ import {
   RegisterClientInput,
   UpdateClientInput,
 } from "../validation/clients.validation";
+import { logger } from "../lib/logger";
+
+const log = logger.child({ module: "clients.controller" });
 
 export class ClientsController {
   async register(req: Request, res: Response) {
-    const developerId = (req as any).auth?.sub ?? (req.session as any)?.userId;
+    const developerId = req.session.userId;
     const result = await clientsService.register(
       req.body as RegisterClientInput,
       developerId,
+    );
+    log.info(
+      { developerId, clientId: result.clientId },
+      "Client registered successfully",
     );
     res.status(201).json(result);
   }
 
   async update(req: Request, res: Response) {
-    const developerId = (req as any).auth?.sub ?? (req.session as any)?.userId;
+    const developerId = req.session.userId!;
     const clientId = req.params.clientId as string;
-    try {
-      const result = await clientsService.update(
-        clientId,
-        developerId,
-        req.body as UpdateClientInput,
-      );
-      res.json(result);
-    } catch (err: any) {
-      if (err.message === "Client not found or unauthorized") {
-        res.status(404).json({ error: err.message });
-      } else {
-        res.status(500).json({ error: "Internal server error" });
-      }
-    }
+
+    const result = await clientsService.update(
+      clientId,
+      developerId,
+      req.body as UpdateClientInput,
+    );
+    log.info({ developerId, clientId }, "Client updated successfully");
+    res.json(result);
   }
 }
 

@@ -1,12 +1,12 @@
-- app pages in dark mode
-- way to manage registered applications
-- show tpa's logo in the consent screen (done)
-- flash consent after 3/6 months or after oauth client changes their scopes, otherwise don't flash it everytime user wants to log in. it should be a first time event (done)
-- convert all the ejs stuff in react
-- way for normal users to regsiter on to our idp so that they can register their applications and manage their personal data on our idp resource servers.
-- proper logging system for idp
-- forget/reset password pages for idp
-- email and phone verification if possible
-- validations, sanitizations and checking if the code follows same patterns consistently throughout the codebase
-- better error handling, error codes
-- better responses
+- [ ] app pages in dark mode
+- [ ] way to manage registered applications
+- [x] show tpa's logo in the consent screen
+- [x] flash consent after 3/6 months or after oauth client changes their scopes, otherwise don't flash it everytime user wants to log in. it should be a first time event
+- [ ] convert all the ejs stuff in react
+- [x] way for normal users to regsiter on to our idp so that they can register their applications and manage their personal data on our idp resource servers.
+- [x] proper logging system for idp
+- [ ] forget/reset password pages for idp
+- [ ] email and phone verification if possible
+- [x] validations, sanitizations and checking if the code follows same patterns consistently throughout the codebase
+- [ ] better error handling, error codes
+- [ ] better responses
