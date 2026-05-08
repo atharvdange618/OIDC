@@ -3,6 +3,7 @@ import { randomBytes } from "crypto";
 import { RefreshTokenInput, TokenInput } from "../validation/token.validation";
 import { prisma } from "../lib/prisma";
 import { BadRequestError, UnauthorizedError } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 import { verifyPkce } from "../lib/pkce";
 import { signJwt } from "../lib/jwt";
 import { getActiveClient } from "../lib/oauthClient";
@@ -14,7 +15,8 @@ const log = logger.child({ module: "token.service" });
 export class TokenService {
   async exchange(input: TokenInput) {
     const client = await getActiveClient(input.client_id);
-    if (!client) throw new UnauthorizedError("Invalid client");
+    if (!client)
+      throw new UnauthorizedError("Invalid client", ErrorCodes.INVALID_CLIENT);
 
     const secretValid = await bcrypt.compare(
       input.client_secret,
@@ -25,7 +27,10 @@ export class TokenService {
         { clientId: input.client_id, security: true },
         "Token exchange rejected - invalid client secret",
       );
-      throw new UnauthorizedError("Invalid client credentials");
+      throw new UnauthorizedError(
+        "Invalid client credentials",
+        ErrorCodes.INVALID_CLIENT_CREDENTIALS,
+      );
     }
 
     const authCode = await prisma.authCode.findUnique({
@@ -36,20 +41,37 @@ export class TokenService {
         user: true,
       },
     });
-    if (!authCode) throw new BadRequestError("Invalid authorization code");
+    if (!authCode)
+      throw new BadRequestError(
+        "Invalid authorization code",
+        ErrorCodes.INVALID_GRANT,
+      );
 
     if (authCode.expiresAt < new Date())
-      throw new BadRequestError("Authorization code has expired");
+      throw new BadRequestError(
+        "Authorization code has expired",
+        ErrorCodes.INVALID_GRANT,
+      );
 
     if (authCode.redirectUri !== input.redirect_uri)
-      throw new BadRequestError("redirect_uri mismatch");
+      throw new BadRequestError(
+        "redirect_uri mismatch",
+        ErrorCodes.INVALID_REDIRECT_URI,
+      );
 
     if (authCode.clientId !== input.client_id)
-      throw new UnauthorizedError("Client mismatch");
+      throw new UnauthorizedError(
+        "Client mismatch",
+        ErrorCodes.CREDENTIALS_MISMATCH,
+      );
 
     const pkceValid = verifyPkce(input.code_verifier, authCode.codeChallenge);
 
-    if (!pkceValid) throw new BadRequestError("PKCE verification failed");
+    if (!pkceValid)
+      throw new BadRequestError(
+        "PKCE verification failed",
+        ErrorCodes.PKCE_FAILED,
+      );
 
     return prisma.$transaction(async (tx) => {
       const updated = await tx.authCode.updateMany({
@@ -73,6 +95,7 @@ export class TokenService {
         );
         throw new BadRequestError(
           "Authorization code already used - all tokens revoked",
+          ErrorCodes.TOKEN_REUSE_DETECTED,
         );
       }
 
@@ -140,7 +163,8 @@ export class TokenService {
 
   async refresh(input: RefreshTokenInput) {
     const client = await getActiveClient(input.client_id);
-    if (!client) throw new UnauthorizedError("Invalid client");
+    if (!client)
+      throw new UnauthorizedError("Invalid client", ErrorCodes.INVALID_CLIENT);
 
     const secretValid = await bcrypt.compare(
       input.client_secret,
@@ -151,7 +175,10 @@ export class TokenService {
         { clientId: input.client_id, security: true },
         "Token refresh rejected - invalid client secret",
       );
-      throw new UnauthorizedError("Invalid client credentials");
+      throw new UnauthorizedError(
+        "Invalid client credentials",
+        ErrorCodes.INVALID_CLIENT_CREDENTIALS,
+      );
     }
 
     const stored = await prisma.refreshToken.findUnique({
@@ -159,18 +186,29 @@ export class TokenService {
       include: { user: true },
     });
 
-    if (!stored) throw new BadRequestError("Invalid refresh token");
+    if (!stored)
+      throw new BadRequestError(
+        "Invalid refresh token",
+        ErrorCodes.INVALID_GRANT,
+      );
 
     if (stored.clientId !== input.client_id)
       throw new UnauthorizedError(
         "Refresh token does not belong to this client",
+        ErrorCodes.CREDENTIALS_MISMATCH,
       );
 
     if (stored.expiresAt < new Date())
-      throw new BadRequestError("Refresh token has expired");
+      throw new BadRequestError(
+        "Refresh token has expired",
+        ErrorCodes.INVALID_GRANT,
+      );
 
     if (stored.revokedAt !== null)
-      throw new BadRequestError("Refresh token has been revoked");
+      throw new BadRequestError(
+        "Refresh token has been revoked",
+        ErrorCodes.INVALID_GRANT,
+      );
 
     return prisma.$transaction(async (tx) => {
       const updated = await tx.refreshToken.updateMany({
@@ -190,6 +228,7 @@ export class TokenService {
         await authService.revokeTokensForLogout(stored.userId, input.client_id);
         throw new BadRequestError(
           "Refresh token reuse detected - all tokens revoked",
+          ErrorCodes.TOKEN_REUSE_DETECTED,
         );
       }
 

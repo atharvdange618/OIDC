@@ -6,6 +6,7 @@ import {
   UpdateClientInput,
 } from "../validation/clients.validation";
 import { ConflictError, NotFoundError } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 
 export class ClientsService {
   async register(data: RegisterClientInput, developerId?: string) {
@@ -51,7 +52,7 @@ export class ClientsService {
       ) {
         throw new ConflictError(
           "Client ID collision - please try again",
-          "CLIENT_ID_CONFLICT",
+          ErrorCodes.CLIENT_ID_CONFLICT,
         );
       }
       throw err;

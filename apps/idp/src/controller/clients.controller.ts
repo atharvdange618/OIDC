@@ -5,6 +5,7 @@ import {
   UpdateClientInput,
 } from "../validation/clients.validation";
 import { logger } from "../lib/logger";
+import { sendSuccess } from "../lib/response";
 
 const log = logger.child({ module: "clients.controller" });
 
@@ -19,7 +20,7 @@ export class ClientsController {
       { developerId, clientId: result.clientId },
       "Client registered successfully",
     );
-    res.status(201).json(result);
+    sendSuccess(res, result, 201);
   }
 
   async update(req: Request, res: Response) {
@@ -32,7 +33,7 @@ export class ClientsController {
       req.body as UpdateClientInput,
     );
     log.info({ developerId, clientId }, "Client updated successfully");
-    res.json(result);
+    sendSuccess(res, result);
   }
 }
 

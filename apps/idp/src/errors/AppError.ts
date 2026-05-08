@@ -1,8 +1,10 @@
+import { ErrorCodes, type ErrorCode } from "./ErrorCodes";
+
 export class AppError extends Error {
   constructor(
     public readonly message: string,
     public readonly statusCode: number,
-    public readonly code: string,
+    public readonly code: ErrorCode,
   ) {
     super(message);
     this.name = "AppError";
@@ -11,31 +13,31 @@ export class AppError extends Error {
 }
 
 export class BadRequestError extends AppError {
-  constructor(message: string, code = "BAD_REQUEST") {
+  constructor(message: string, code: ErrorCode = ErrorCodes.BAD_REQUEST) {
     super(message, 400, code);
   }
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message: string, code = "UNAUTHORIZED") {
+  constructor(message: string, code: ErrorCode = ErrorCodes.UNAUTHORIZED) {
     super(message, 401, code);
   }
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message: string, code = "FORBIDDEN") {
+  constructor(message: string, code: ErrorCode = ErrorCodes.FORBIDDEN) {
     super(message, 403, code);
   }
 }
 
 export class NotFoundError extends AppError {
-  constructor(message: string, code = "NOT_FOUND") {
+  constructor(message: string, code: ErrorCode = ErrorCodes.NOT_FOUND) {
     super(message, 404, code);
   }
 }
 
 export class ConflictError extends AppError {
-  constructor(message: string, code = "CONFLICT") {
+  constructor(message: string, code: ErrorCode = ErrorCodes.CONFLICT) {
     super(message, 409, code);
   }
 }

@@ -4,6 +4,7 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 import type { AuthorizeInput } from "../validation/authorize.validation";
 import { prisma } from "../lib/prisma";
 import { getActiveClient } from "../lib/oauthClient";
@@ -11,7 +12,7 @@ import { getActiveClient } from "../lib/oauthClient";
 export class AuthorizeService {
   async authorize(input: AuthorizeInput, userId: string) {
     const client = await getActiveClient(input.client_id);
-    if (!client) throw new NotFoundError("Client not found");
+    if (!client) throw new NotFoundError("Client not found", ErrorCodes.CLIENT_NOT_FOUND);
 
     const registeredUris = client.redirectUris as string[];
 
@@ -24,11 +25,12 @@ export class AuthorizeService {
     if (!isUriMatched)
       throw new BadRequestError(
         "redirect_uri does not match any registered URI",
+        ErrorCodes.INVALID_REDIRECT_URI,
       );
 
     const requestedScopes = input.scope.split(" ");
     const hasOpenid = requestedScopes.includes("openid");
-    if (!hasOpenid) throw new BadRequestError('scope must include "openid"');
+    if (!hasOpenid) throw new BadRequestError('scope must include "openid"', ErrorCodes.INVALID_SCOPE);
 
     const invalidScopes = requestedScopes.filter(
       (s) => !client.allowedScopes.includes(s),
@@ -36,6 +38,7 @@ export class AuthorizeService {
     if (invalidScopes.length > 0)
       throw new BadRequestError(
         `Client is not allowed to request scopes: ${invalidScopes.join(", ")}`,
+        ErrorCodes.INVALID_SCOPE,
       );
 
     const user = await prisma.user.findUnique({
@@ -45,7 +48,7 @@ export class AuthorizeService {
     });
 
     if (!user || !user.isActive)
-      throw new UnauthorizedError("User not found or inactive");
+      throw new UnauthorizedError("User not found or inactive", ErrorCodes.USER_NOT_FOUND);
 
     const code = randomBytes(32).toString("base64url");
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);

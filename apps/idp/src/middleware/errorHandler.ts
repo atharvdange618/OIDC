@@ -1,5 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { AppError } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 import { ZodError } from "zod";
 import { logger } from "../lib/logger";
 
@@ -11,17 +12,23 @@ export const errorHandler = (
 ) => {
   if (err instanceof ZodError) {
     res.status(400).json({
-      error: "VALIDATION_ERROR",
-      message: "Invalid request data",
-      details: err.flatten(),
+      success: false,
+      error: {
+        code: ErrorCodes.VALIDATION_ERROR,
+        message: "Invalid request data",
+        details: err.flatten(),
+      },
     });
     return;
   }
 
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
-      error: err.code,
-      message: err.message,
+      success: false,
+      error: {
+        code: err.code,
+        message: err.message,
+      },
     });
     return;
   }
@@ -36,7 +43,10 @@ export const errorHandler = (
     "Unhandled error",
   );
   res.status(500).json({
-    error: "INTERNAL_SERVER_ERROR",
-    message: "Something went wrong",
+    success: false,
+    error: {
+      code: ErrorCodes.INTERNAL_SERVER_ERROR,
+      message: "Something went wrong",
+    },
   });
 };

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AuthorizeInput } from "../validation/authorize.validation";
 import { authorizeService } from "../services/authorize.service";
 import { BadRequestError } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 import { ISSUER } from "../config/keys";
 import { prisma } from "../lib/prisma";
 import { getActiveClient } from "../lib/oauthClient";
@@ -25,7 +26,7 @@ export class AuthorizeController {
       .validatedQuery as AuthorizeInput;
 
     const client = await getActiveClient(input.client_id);
-    if (!client) throw new BadRequestError("Invalid client");
+    if (!client) throw new BadRequestError("Invalid client", ErrorCodes.INVALID_CLIENT);
 
     const registeredUris = client.redirectUris as string[];
     if (!registeredUris.includes(input.redirect_uri)) {
@@ -39,12 +40,13 @@ export class AuthorizeController {
       );
       throw new BadRequestError(
         "redirect_uri does not match any registered URI",
+        ErrorCodes.INVALID_REDIRECT_URI,
       );
     }
 
     const requestedScopes = input.scope.split(" ");
     if (!requestedScopes.includes("openid")) {
-      throw new BadRequestError('scope must include "openid"');
+      throw new BadRequestError('scope must include "openid"', ErrorCodes.INVALID_SCOPE);
     }
 
     const invalidScopes = requestedScopes.filter(
@@ -53,6 +55,7 @@ export class AuthorizeController {
     if (invalidScopes.length > 0) {
       throw new BadRequestError(
         `Client is not allowed to request scopes: ${invalidScopes.join(", ")}`,
+        ErrorCodes.INVALID_SCOPE,
       );
     }
 
@@ -121,7 +124,7 @@ export class AuthorizeController {
   }
 
   async approve(req: Request, res: Response) {
-    if (!req.session.userId) throw new BadRequestError("No active session");
+    if (!req.session.userId) throw new BadRequestError("No active session", ErrorCodes.SESSION_EXPIRED);
 
     const input = req.body as AuthorizeInput;
     const { code, state, redirectUri } = await authorizeService.authorize(

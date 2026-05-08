@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { tokenService } from "../services/token.service";
 import { BadRequestError } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 import { IntrospectInput } from "../validation/introspect.validation";
 import { introspectService } from "../services/introspect.service";
 
@@ -23,7 +24,7 @@ export class TokenController {
       return;
     }
 
-    throw new BadRequestError("Unsupported grant_type");
+    throw new BadRequestError("Unsupported grant_type", ErrorCodes.UNSUPPORTED_GRANT_TYPE);
   }
 
   async introspect(req: Request, res: Response) {

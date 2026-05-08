@@ -3,18 +3,19 @@ import { prisma } from "../lib/prisma";
 import { verifyJwt } from "../lib/jwt";
 import { getActiveClient } from "../lib/oauthClient";
 import { UnauthorizedError } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 import type { IntrospectInput } from "../validation/introspect.validation";
 
 export class IntrospectService {
   async introspect(input: IntrospectInput) {
     const client = await getActiveClient(input.client_id);
-    if (!client) throw new UnauthorizedError("Invalid client");
+    if (!client) throw new UnauthorizedError("Invalid client", ErrorCodes.INVALID_CLIENT);
 
     const secretValid = await bcrypt.compare(
       input.client_secret,
       client.clientSecretHash,
     );
-    if (!secretValid) throw new UnauthorizedError("Invalid client credentials");
+    if (!secretValid) throw new UnauthorizedError("Invalid client credentials", ErrorCodes.INVALID_CLIENT_CREDENTIALS);
 
     const { token, token_type_hint } = input;
 

@@ -9,18 +9,19 @@ import { ISSUER } from "../config/keys";
 import { getActiveClient } from "../lib/oauthClient";
 import { RequestWithValidatedQuery } from "../middleware/validate";
 import { logger, maskEmail, hashSessionId } from "../lib/logger";
+import { sendSuccess } from "../lib/response";
 
 const log = logger.child({ module: "auth.controller" });
 
 export class AuthController {
   async register(req: Request, res: Response) {
     const user = await authService.register(req.body as RegisterInput);
-    res.status(201).json({ user });
+    sendSuccess(res, { user }, 201);
   }
 
   async login(req: Request, res: Response) {
     const result = await authService.login(req.body as LoginInput);
-    res.json(result);
+    sendSuccess(res, result);
   }
 
   // get

@@ -4,6 +4,7 @@ import {
   ConflictError,
   UnauthorizedError,
 } from "../errors/AppError";
+import { ErrorCodes } from "../errors/ErrorCodes";
 import { prisma } from "../lib/prisma";
 import {
   EndSessionInput,
@@ -56,13 +57,13 @@ export class AuthService {
     });
 
     if (!user || !user.isActive) {
-      throw new UnauthorizedError("Invalid credentials");
+      throw new UnauthorizedError("Invalid credentials", ErrorCodes.CREDENTIALS_MISMATCH);
     }
 
     const valid = await bcrypt.compare(data.password, user.passwordHash);
 
     if (!valid) {
-      throw new UnauthorizedError("Invalid credentials");
+      throw new UnauthorizedError("Invalid credentials", ErrorCodes.CREDENTIALS_MISMATCH);
     }
 
     await prisma.user.update({
@@ -93,7 +94,7 @@ export class AuthService {
         clientId = Array.isArray(rawAud) ? rawAud[0] : (rawAud as string);
         userId = payload.sub as string;
       } catch {
-        throw new BadRequestError("Invalid id_token_hint");
+        throw new BadRequestError("Invalid id_token_hint", ErrorCodes.INVALID_ID_TOKEN_HINT);
       }
     }
 
@@ -103,6 +104,7 @@ export class AuthService {
       if (clientId && clientId !== input.client_id) {
         throw new BadRequestError(
           "client_id does not match the audience in id_token_hint",
+          ErrorCodes.CREDENTIALS_MISMATCH,
         );
       }
       clientId = input.client_id;
@@ -112,11 +114,12 @@ export class AuthService {
       if (!clientId) {
         throw new BadRequestError(
           "id_token_hint or client_id is required when post_logout_redirect_uri is provided",
+          ErrorCodes.LOGOUT_URI_MISMATCH,
         );
       }
 
       const client = await getActiveClient(clientId);
-      if (!client) throw new BadRequestError("Client not found or inactive");
+      if (!client) throw new BadRequestError("Client not found or inactive", ErrorCodes.CLIENT_NOT_FOUND);
 
       const registeredUris = client.postLogoutRedirectUris;
 
@@ -130,6 +133,7 @@ export class AuthService {
       if (!isRegistered) {
         throw new BadRequestError(
           "post_logout_redirect_uri is not registered for this client",
+          ErrorCodes.LOGOUT_URI_MISMATCH,
         );
       }
     }
