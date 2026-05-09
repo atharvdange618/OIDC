@@ -5,6 +5,7 @@ The official Next.js SDK for **Kleis OIDC**. Effortless authentication for Next.
 ## Features
 
 - **Secure by Default**: Uses HTTP-only cookies and PKCE.
+- **Full SSO**: Log in once on the IdP - every app is authenticated.
 - **Next.js Optimized**: Built for App Router, Middleware, and Server Actions.
 - **Lightweight**: Minimal dependencies (`jose`, `zod`).
 - TypeScript ready with full type safety.

@@ -4,7 +4,7 @@ Kleis is a comprehensive OIDC solution for the Next.js ecosystem and beyond.
 
 ## Next.js SDK Guide
 
-The @kleis-auth/nextjs SDK provides a seamless way to integrate the Kleis Identity Provider (IdP) into Next.js applications (App Router). It abstracts away the complexities of the OIDC Authorization Code Flow with PKCE, session management, and route protection.
+The @kleis-auth/nextjs SDK provides a seamless way to integrate the Kleis Identity Provider (IdP) into Next.js applications (App Router). It abstracts away the complexities of the OIDC Authorization Code Flow with PKCE, session management, and route protection. The IdP provides full Single Sign-On (SSO) - log in once and every registered app is authenticated.
 
 ### Installation
 pnpm add @kleis-auth/nextjs

@@ -12,7 +12,7 @@ If you've only ever been on the client side of OIDC (using Google, GitHub, etc. 
 
 Two services:
 
-**1. The IdP Service (this repo)** - the identity provider. Handles user registration, login, OAuth client registration, authorization, and token issuance. Signs JWTs with RS256.
+**1. The IdP Service (this repo)** - the identity provider. Handles user registration, login, OAuth client registration, authorization, and token issuance. Signs JWTs with RS256. Serves as a **full Single Sign-On (SSO) provider** - log in once and every registered app gets authentication for free.
 
 **2. A Demo Client App** - a simple frontend that registers as a client with our IdP and demonstrates the full OIDC flow end to end. Think of it as "Login with Our IdP."
 
@@ -30,6 +30,7 @@ Two services:
 - Refresh tokens with rotation and reuse detection
 - Userinfo endpoint
 - RP-Initiated Logout with token revocation
+- Full SSO (Single Sign-On) across all registered OAuth clients
 - Token Introspection endpoint
 - Just-in-Time user provisioning (on the client side)
 

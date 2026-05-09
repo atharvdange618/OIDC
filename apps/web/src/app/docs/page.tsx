@@ -73,6 +73,10 @@ export default function DocsIntroduction() {
         </h3>
         <ul className="grid gap-4 md:grid-cols-2 font-serif text-gray-400">
           <li className="flex gap-2">
+            <span className="text-primary font-black">✔</span> Full SSO Across
+            All Your Apps
+          </li>
+          <li className="flex gap-2">
             <span className="text-primary font-black">✔</span> Standards
             Compliant OIDC
           </li>

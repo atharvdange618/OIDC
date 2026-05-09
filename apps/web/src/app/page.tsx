@@ -12,7 +12,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Ship Auth Effortlessly",
   description:
-    "The lightweight OIDC provider and Next.js SDK for modern applications. Secure by default with PKCE and HTTP-only cookies.",
+    "The lightweight OIDC provider and Next.js SDK for modern applications. Secure by default with PKCE, HTTP-only cookies, and full SSO.",
 };
 
 export default function HomePage() {

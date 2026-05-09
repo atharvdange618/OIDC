@@ -4,6 +4,7 @@ Kleis is a modern, standards-compliant OpenID Connect (OIDC) suite. It consists 
 
 ## Core Features
 - Standards Compliant: Full OIDC support with Discovery and JWKS endpoints.
+- Full SSO: Single Sign-On across all registered applications.
 - Edge Ready: Middleware and session logic built to run on the Edge.
 - PKCE Handshake: Secure OAuth flow for single-page applications.
 - Language Agnostic: Use the IdP manually via standard OIDC APIs.

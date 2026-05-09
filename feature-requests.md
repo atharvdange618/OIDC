@@ -8,5 +8,5 @@
 - [ ] forget/reset password pages for idp
 - [ ] email and phone verification if possible
 - [x] validations, sanitizations and checking if the code follows same patterns consistently throughout the codebase
-- [ ] better error handling, error codes
-- [ ] better responses
+- [x] better error handling, error codes
+- [x] better responses

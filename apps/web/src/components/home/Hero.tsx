@@ -19,13 +19,13 @@ export const Hero = () => {
               <span className="relative z-10 text-white dark:text-black">
                 effortless.
               </span>
-              <span className="absolute inset-0 bg-black dark:bg-white -rotate-1 -z-0 translate-y-2 translate-x-2" />
-              <span className="absolute inset-0 bg-[#60B5FF] dark:bg-primary -rotate-1 -z-0" />
+              <span className="absolute inset-0 bg-black dark:bg-white -rotate-1 z-0 translate-y-2 translate-x-2" />
+              <span className="absolute inset-0 bg-[#60B5FF] dark:bg-primary -rotate-1 z-0" />
             </span>
           </h1>
           <p className="mt-8 text-xl font-serif leading-relaxed text-muted-foreground max-w-xl">
             Kleis is an OIDC provider and a Next.js SDK built for the modern
-            web. PKCE, HTTP-only cookies, and Edge-ready middleware-without the
+            web. PKCE, HTTP-only cookies, full SSO, and Edge-ready middleware - without the
             bloat.
           </p>
 

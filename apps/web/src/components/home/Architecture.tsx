@@ -33,7 +33,8 @@ export const Architecture = () => {
             Kleis splits into two parts: A robust{" "}
             <strong>OIDC Identity Provider</strong> and a{" "}
             <strong>Next.js SDK</strong>. Your app stays lean while we handle
-            the heavy lifting of security.
+            the heavy lifting of security. Log in once - every registered app
+            gets SSO for free.
           </p>
 
           <div className="mt-10 space-y-6">

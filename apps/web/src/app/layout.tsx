@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s | Kleis",
   },
   description:
-    "Kleis is an open-source OIDC provider and Next.js SDK for secure, lightweight authentication. Built for the App Router with PKCE and HTTP-only cookies.",
+    "Kleis is an open-source OIDC provider and Next.js SDK for secure, lightweight authentication with full SSO. Built for the App Router with PKCE and HTTP-only cookies.",
   keywords: [
     "OIDC",
     "Next.js",
@@ -31,6 +31,8 @@ export const metadata: Metadata = {
     "Auth SDK",
     "Identity Provider",
     "Next.js Auth",
+    "SSO",
+    "Single Sign-On",
   ],
   authors: [{ name: "Atharv Dange", url: "https://atharvdangedev.in" }],
   creator: "Atharv Dange",
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "Kleis",
     title: "Kleis - OIDC for Next.js",
     description:
-      "Secure, lightweight authentication with PKCE and HTTP-only cookies for Next.js applications.",
+      "Secure, lightweight authentication with PKCE, HTTP-only cookies, and full SSO for Next.js applications.",
     images: [
       {
         url: "/og-image.png",
@@ -55,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kleis - OIDC for Next.js",
     description:
-      "Secure, lightweight authentication with PKCE and HTTP-only cookies for Next.js applications.",
+      "Secure, lightweight authentication with PKCE, HTTP-only cookies, and full SSO for Next.js applications.",
     images: ["/og-image.png"],
     creator: "@atharvdangedev",
   },
@@ -77,7 +79,7 @@ export default function RootLayout({
     operatingSystem: "All",
     applicationCategory: "SecurityApplication",
     description:
-      "Kleis is an open-source OIDC provider and Next.js SDK for secure, lightweight authentication with PKCE and HTTP-only cookies.",
+      "Kleis is an open-source OIDC provider and Next.js SDK for secure, lightweight authentication with PKCE, HTTP-only cookies, and full SSO.",
     offers: {
       "@type": "Offer",
       price: "0",

@@ -4,6 +4,8 @@ This guide explains how to integrate your application directly with the Kleis Id
 
 **Yes, the Kleis Auth Server can be used completely independently of any SDK.** It implements standard OIDC specifications, meaning you can interact with it using any HTTP client or standard OIDC libraries across any language or framework.
 
+The IdP also provides **full Single Sign-On (SSO)** - once a user logs in, their session persists across all applications registered with the IdP. No repeated logins needed.
+
 ## Endpoints Overview
 
 The Kleis IdP exposes the following standard endpoints:

@@ -12,7 +12,7 @@ export const Features = () => {
   const features = [
     {
       title: "Standards Compliant",
-      body: "Full OpenID Connect (OIDC) support with Discovery and JWKS endpoints.",
+      body: "Full OpenID Connect (OIDC) support with Discovery and JWKS endpoints. Full SSO across all your apps.",
       icon: <LuFileText className="text-blue-500" size={24} />,
     },
     {
