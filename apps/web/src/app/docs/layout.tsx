@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
 import { Tag } from "@/components/neo/Tag";
+import { APP_VERSION } from "@/lib/version";
 
 const sidebarLinks = [
   { href: "/docs", label: "Introduction" },
@@ -54,7 +55,7 @@ export default function DocsLayout({
                 Status
               </p>
               <Tag tone="peach" className="w-full justify-center">
-                v1.0.0
+                v{APP_VERSION}
               </Tag>
             </div>
           </div>

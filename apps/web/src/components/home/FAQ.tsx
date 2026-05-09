@@ -1,10 +1,11 @@
 import { Section } from "@/components/neo/Section";
+import { APP_VERSION } from "@/lib/version";
 
 export const FAQ = () => {
   const faqs = [
     {
       q: "Is Kleis production ready?",
-      a: "Kleis is currently in v1.0.0-beta. It implements OIDC standards and uses industry-standard libraries like `jose`. We recommend it for small-to-medium projects while we stabilize.",
+      a: `Kleis is currently in v${APP_VERSION}. It implements OIDC standards and uses industry-standard libraries like \`jose\`. We recommend it for small-to-medium projects while we stabilize.`,
     },
     {
       q: "Why not just use NextAuth?",

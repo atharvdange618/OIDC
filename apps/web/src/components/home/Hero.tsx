@@ -2,6 +2,7 @@ import { Button } from "@/components/neo/Button";
 import { Tag } from "@/components/neo/Tag";
 import { Section } from "@/components/neo/Section";
 import { CodeBlock } from "@/components/neo/CodeBlock";
+import { APP_VERSION } from "@/lib/version";
 import { FaGithub } from "react-icons/fa";
 
 export const Hero = () => {
@@ -11,7 +12,7 @@ export const Hero = () => {
       <div className="grid gap-12 lg:grid-cols-2 items-center">
         <div>
           <Tag tone="peach" className="mb-6 px-3 py-1.5 text-sm">
-            SHIPPING V1.0.0
+            SHIPPING V{APP_VERSION}
           </Tag>
           <h1 className="text-5xl sm:text-7xl font-black leading-[1.05] font-sans tracking-tight">
             Ship auth that feels{" "}
