@@ -150,7 +150,7 @@
               </div>
               <div style="margin-bottom: 0.5rem;">
                 <label style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">Client ID</label>
-                <div class="code-block"><%= client.id %></div>
+                <div class="code-block"><%= client.clientId %></div>
               </div>
               <div style="margin-bottom: 0.5rem;">
                 <label style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">Redirect URIs</label>
@@ -235,24 +235,24 @@
   <script>
     document.getElementById('registerClientForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const form = e.target;
       const submitBtn = form.querySelector('button[type="submit"]');
       const errorDiv = document.getElementById('registerError');
       const successDiv = document.getElementById('registerSuccess');
-      
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Registering...';
       errorDiv.style.display = 'none';
-      
+
       try {
         const redirectUris = document.getElementById('redirectUris').value.split(',').map(u => u.trim()).filter(Boolean);
         const postLogoutStr = document.getElementById('postLogoutRedirectUris').value;
         const postLogoutRedirectUris = postLogoutStr ? postLogoutStr.split(',').map(u => u.trim()).filter(Boolean) : undefined;
-        
+
         const scopeCheckboxes = Array.from(form.querySelectorAll('input[name="scopes"]:checked'));
         const allowedScopes = ['openid', ...scopeCheckboxes.map(cb => cb.value).filter(val => val !== 'openid')];
-        
+
         const payload = {
           name: document.getElementById('name').value,
           appUrl: document.getElementById('appUrl').value || undefined,
@@ -261,7 +261,7 @@
           postLogoutRedirectUris,
           allowedScopes
         };
-        
+
         const res = await fetch('/clients/register', {
           method: 'POST',
           headers: {
@@ -269,19 +269,18 @@
           },
           body: JSON.stringify(payload)
         });
-        
-        const data = await res.json();
-        
+
+        const response = await res.json();
+
         if (!res.ok) {
-          throw new Error(data.message || 'Failed to register client');
+          throw new Error(response.error?.message || response.message || 'Failed to register client');
         }
-        
         form.reset();
         form.style.display = 'none';
         successDiv.style.display = 'block';
-        document.getElementById('newClientId').textContent = data.clientId;
-        document.getElementById('newClientSecret').textContent = data.clientSecret;
-        
+        document.getElementById('newClientId').textContent = response.data.clientId;
+        document.getElementById('newClientSecret').textContent = response.data.clientSecret;
+
       } catch (err) {
         errorDiv.textContent = err.message;
         errorDiv.style.display = 'block';

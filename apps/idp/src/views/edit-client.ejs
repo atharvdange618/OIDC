@@ -96,7 +96,7 @@
     <div class="card">
       <div style="margin-bottom: 1rem;">
         <label style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.25rem;">Client ID</label>
-        <div class="code-block"><%= client.id %></div>
+        <div class="code-block"><%= client.clientId %></div>
       </div>
 
       <form id="editClientForm">
@@ -170,7 +170,7 @@
 
         const scopeCheckboxes = Array.from(form.querySelectorAll('input[name="scopes"]:checked'));
         const allowedScopes = ['openid', ...scopeCheckboxes.map(cb => cb.value).filter(val => val !== 'openid')];
-        
+
         const payload = {
           name: document.getElementById('name').value,
           appUrl: document.getElementById('appUrl').value || '',
@@ -179,7 +179,7 @@
           postLogoutRedirectUris,
           allowedScopes
         };
-        
+
         const res = await fetch('/clients/<%= client.id %>', {
           method: 'PUT',
           headers: {
@@ -187,18 +187,17 @@
           },
           body: JSON.stringify(payload)
         });
-        
+
         const data = await res.json();
-        
+
         if (!res.ok) {
-          throw new Error(data.message || data.error || 'Failed to update client');
+          throw new Error(data.error?.message || data.message || 'Failed to update client');
         }
-        
         successDiv.style.display = 'block';
         setTimeout(() => {
           successDiv.style.display = 'none';
         }, 3000);
-        
+
       } catch (err) {
         errorDiv.textContent = err.message;
         errorDiv.style.display = 'block';
