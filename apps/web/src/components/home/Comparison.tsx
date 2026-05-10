@@ -9,13 +9,13 @@ export const Comparison = () => {
   return (
     <Section
       id="why"
-      className="border-t-4 border-black dark:border-gray-700 bg-[#FFECDB]/30 dark:bg-neutral-900/20"
+      className="border-t-4 border-black dark:border-neutral-700 bg-[#FFECDB]/30 dark:bg-neutral-900/20"
     >
       <div className="mb-16 text-center lg:text-left">
         <Tag tone="blue" className="mb-4">
           THE PROBLEM
         </Tag>
-        <h2 className="text-4xl sm:text-5xl font-black font-sans leading-tight">
+        <h2 className="text-4xl sm:text-5xl font-semibold font-sans leading-tight">
           Stop fighting your auth <br className="hidden lg:block" />
           and start shipping features.
         </h2>

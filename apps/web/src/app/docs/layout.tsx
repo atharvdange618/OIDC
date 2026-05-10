@@ -26,7 +26,7 @@ export default function DocsLayout({
       <Navbar />
       <div className="flex-1 flex flex-col lg:flex-row max-w-6xl mx-auto w-full">
         {/* Sidebar */}
-        <aside className="w-full lg:w-64 border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 p-6 bg-neutral-50 dark:bg-neutral-900/50">
+        <aside className="w-full lg:w-64 border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-neutral-700 p-6 bg-neutral-50 dark:bg-neutral-900/50">
           <div className="sticky top-28">
             <p className="uppercase tracking-widest font-black text-xs font-sans mb-6">
               Documentation
@@ -42,7 +42,7 @@ export default function DocsLayout({
                       "block px-4 py-2 font-black font-sans border-2 border-transparent transition-all",
                       isActive
                         ? "bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]"
-                        : "hover:border-black dark:hover:border-gray-700 hover:translate-x-1",
+                        : "hover:border-black dark:hover:border-neutral-700 hover:translate-x-1",
                     )}
                   >
                     {link.label}
@@ -50,7 +50,7 @@ export default function DocsLayout({
                 );
               })}
             </nav>
-            <div className="mt-12 p-4 border-2 border-black dark:border-gray-700 bg-[#FFECDB] dark:bg-neutral-900">
+            <div className="mt-12 p-4 border-2 border-black dark:border-neutral-700 bg-[#FFECDB] dark:bg-neutral-900">
               <p className="text-xs font-black font-sans uppercase mb-2">
                 Status
               </p>

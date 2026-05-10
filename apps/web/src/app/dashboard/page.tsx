@@ -11,7 +11,7 @@ export default function DeveloperDashboardPlaceholder() {
             <p className="uppercase tracking-wide font-bold text-xs font-sans">
               Developer dashboard
             </p>
-            <h1 className="mt-3 text-4xl sm:text-5xl font-black font-sans">
+            <h1 className="mt-3 text-4xl sm:text-5xl font-semibold font-sans">
               Coming soon
             </h1>
             <p className="mt-4 text-muted-foreground font-serif leading-relaxed">

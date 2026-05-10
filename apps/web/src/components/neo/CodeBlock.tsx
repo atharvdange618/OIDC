@@ -8,9 +8,9 @@ export type CodeBlockProps = React.ComponentPropsWithoutRef<"pre"> & {
 
 export function CodeBlock({ className, title, ...props }: CodeBlockProps) {
   return (
-    <div className="rounded-none border-4 border-black dark:border-gray-700 bg-[#FFECDB] dark:bg-neutral-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(74,144,204,0.25)]">
+    <div className="rounded-none border-4 border-black dark:border-neutral-700 bg-[#FFECDB] dark:bg-neutral-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(74,144,204,0.25)]">
       {title ? (
-        <div className="border-b-4 border-black dark:border-gray-700 px-4 py-3 font-bold font-sans text-sm">
+        <div className="border-b-4 border-black dark:border-neutral-700 px-4 py-3 font-bold font-sans text-sm">
           {title}
         </div>
       ) : null}

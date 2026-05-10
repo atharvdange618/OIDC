@@ -1,5 +1,4 @@
 import { Section } from "@/components/neo/Section";
-import { Tag } from "@/components/neo/Tag";
 import { Card, CardContent, CardHeader } from "@/components/neo/Card";
 import { LuFileText } from "react-icons/lu";
 import { FiZap } from "react-icons/fi";
@@ -43,9 +42,9 @@ export const Features = () => {
   ];
 
   return (
-    <Section className="border-t-4 border-black dark:border-gray-700">
+    <Section className="border-t-4 border-black dark:border-neutral-700">
       <div className="mb-16 text-center lg:text-left">
-        <h2 className="text-4xl sm:text-5xl font-black font-sans">
+        <h2 className="text-4xl sm:text-5xl font-semibold font-sans">
           Everything you need.
         </h2>
         <p className="mt-4 text-xl text-muted-foreground font-serif max-w-2xl mx-auto lg:mx-0">

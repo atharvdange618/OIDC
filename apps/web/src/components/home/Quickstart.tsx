@@ -9,14 +9,14 @@ export const Quickstart = () => {
   return (
     <Section
       id="quickstart"
-      className="border-t-4 border-black dark:border-gray-700 bg-neutral-50 dark:bg-neutral-900/50"
+      className="border-t-4 border-black dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50"
     >
       <div className="flex items-end justify-between gap-6 flex-wrap mb-12">
         <div>
           <Tag tone="blue" className="mb-4">
             QUICKSTART GUIDE
           </Tag>
-          <h2 className="text-4xl sm:text-5xl font-black font-sans">
+          <h2 className="text-4xl sm:text-5xl font-semibold font-sans">
             Up and running in minutes.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground font-serif max-w-2xl">
@@ -38,9 +38,9 @@ export const Quickstart = () => {
 
       <div className="grid gap-12">
         <Card className="flex flex-col lg:flex-row items-stretch hover:translate-x-1 hover:translate-y-1 transition-transform overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
-            <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-gray-700">
-              <span className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-black dark:border-gray-700 bg-[#FF9149] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-neutral-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
+            <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-neutral-700">
+              <span className="flex items-center justify-center size-10 rounded-none border-2 border-black dark:border-neutral-700 bg-[#FF9149] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 1
               </span>
               <p className="font-black font-sans text-xl">Env variables</p>
@@ -67,9 +67,9 @@ KLEIS_SECRET=your_session_encryption_secret`}</code>
         </Card>
 
         <Card className="flex flex-col lg:flex-row items-stretch hover:translate-x-1 hover:translate-y-1 transition-transform overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
-            <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-gray-700">
-              <span className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-black dark:border-gray-700 bg-[#60B5FF] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-neutral-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
+            <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-neutral-700">
+              <span className="flex items-center justify-center size-10 rounded-none border-2 border-black dark:border-neutral-700 bg-[#60B5FF] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 2
               </span>
               <p className="font-black font-sans text-xl">Route handler</p>
@@ -98,9 +98,9 @@ export { handler as GET, handler as POST };`}</code>
         </Card>
 
         <Card className="flex flex-col lg:flex-row items-stretch hover:translate-x-1 hover:translate-y-1 transition-transform overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-gray-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
-            <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-gray-700">
-              <span className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-black dark:border-gray-700 bg-[#E0FFF1] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex flex-col border-b-4 lg:border-b-0 lg:border-r-4 border-black dark:border-neutral-700 lg:w-87.5 shrink-0 bg-white dark:bg-neutral-900">
+            <CardHeader className="flex items-center gap-4 py-6 border-b-4 border-black dark:border-neutral-700">
+              <span className="flex items-center justify-center size-10 rounded-none border-2 border-black dark:border-neutral-700 bg-[#E0FFF1] text-black font-black font-sans text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 3
               </span>
               <p className="font-black font-sans text-xl">Middleware</p>

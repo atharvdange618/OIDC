@@ -2,11 +2,12 @@
 
 import {
   createContext,
-  useContext,
+  use,
   useState,
   useCallback,
   type ReactNode,
 } from "react";
+import Image from "next/image";
 
 interface KleisContextType {
   user: any | null;
@@ -57,7 +58,7 @@ export function KleisProvider({
 }
 
 export function useAuth() {
-  const context = useContext(KleisContext);
+  const context = use(KleisContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within a KleisProvider");
   }
@@ -106,7 +107,7 @@ export function useAuth() {
 }
 
 export function useUser() {
-  const context = useContext(KleisContext);
+  const context = use(KleisContext);
   if (context === undefined) {
     throw new Error("useUser must be used within a KleisProvider");
   }
@@ -151,6 +152,52 @@ export function SignOutButton({ children }: { children?: ReactNode }) {
   );
 }
 
+const avatarBtnStyle: React.CSSProperties = {
+  width: "36px",
+  height: "36px",
+  borderRadius: "50%",
+  backgroundColor: "#18181b",
+  color: "white",
+  border: "1px solid #3f3f46",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontWeight: "600",
+  fontSize: "14px",
+  cursor: "pointer",
+  overflow: "hidden",
+};
+
+const dropdownStyle: React.CSSProperties = {
+  position: "absolute",
+  top: "calc(100% + 8px)",
+  right: "0",
+  width: "240px",
+  backgroundColor: "white",
+  border: "1px solid #e4e4e7",
+  borderRadius: "12px",
+  boxShadow:
+    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
+  padding: "16px",
+  zIndex: 50,
+  display: "flex",
+  flexDirection: "column",
+  gap: "12px",
+};
+
+const signOutBtnStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "8px 12px",
+  backgroundColor: "#ef4444",
+  color: "white",
+  border: "none",
+  borderRadius: "6px",
+  fontSize: "14px",
+  fontWeight: "500",
+  cursor: "pointer",
+  textAlign: "center",
+};
+
 export function UserButton() {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
@@ -165,27 +212,15 @@ export function UserButton() {
     <div style={{ position: "relative", display: "inline-block" }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          width: "36px",
-          height: "36px",
-          borderRadius: "50%",
-          backgroundColor: "#18181b",
-          color: "white",
-          border: "1px solid #3f3f46",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: "600",
-          fontSize: "14px",
-          cursor: "pointer",
-          overflow: "hidden",
-        }}
+        style={avatarBtnStyle}
       >
         {user.picture ? (
-          <img
+          <Image
             src={user.picture}
             alt={user.email}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            width={36}
+            height={36}
+            style={{ borderRadius: "50%", objectFit: "cover" }}
           />
         ) : (
           initials
@@ -193,24 +228,7 @@ export function UserButton() {
       </button>
 
       {isOpen && (
-        <div
-          style={{
-            position: "absolute",
-            top: "calc(100% + 8px)",
-            right: "0",
-            width: "240px",
-            backgroundColor: "white",
-            border: "1px solid #e4e4e7",
-            borderRadius: "12px",
-            boxShadow:
-              "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)",
-            padding: "16px",
-            zIndex: 50,
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-          }}
-        >
+        <div style={dropdownStyle}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span
               style={{ fontWeight: "600", color: "#09090b", fontSize: "14px" }}
@@ -234,18 +252,7 @@ export function UserButton() {
             onClick={() => {
               window.location.href = "/api/auth/logout";
             }}
-            style={{
-              width: "100%",
-              padding: "8px 12px",
-              backgroundColor: "#ef4444",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "14px",
-              fontWeight: "500",
-              cursor: "pointer",
-              textAlign: "center",
-            }}
+            style={signOutBtnStyle}
           >
             Sign Out
           </button>

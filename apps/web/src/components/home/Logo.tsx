@@ -5,7 +5,7 @@ export const Logo = () => (
     height="32"
     viewBox="0 0 64 64"
     fill="none"
-    className="w-8 h-8"
+    className="size-8"
   >
     <rect
       x="6"

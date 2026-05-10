@@ -16,7 +16,7 @@ export default function IdpIntegrationDocs() {
         <Tag tone="peach" className="mb-4">
           API GUIDE
         </Tag>
-        <h1 className="text-4xl sm:text-6xl font-black font-sans leading-tight">
+        <h1 className="text-4xl sm:text-6xl font-semibold font-sans leading-tight">
           IDP Integration
         </h1>
         <p className="mt-6 text-xl text-muted-foreground font-serif leading-relaxed max-w-3xl">
@@ -27,7 +27,7 @@ export default function IdpIntegrationDocs() {
       </header>
 
       <section className="space-y-6">
-        <h2 className="text-3xl font-black font-sans">Endpoints</h2>
+        <h2 className="text-3xl font-semibold font-sans">Endpoints</h2>
         <p className="font-serif text-muted-foreground leading-relaxed">
           Kleis exposes standard OIDC endpoints for discovery and
           authentication:
@@ -43,7 +43,7 @@ export default function IdpIntegrationDocs() {
           ].map((ep) => (
             <div
               key={ep.path}
-              className="p-4 border-2 border-black dark:border-gray-700 bg-neutral-50 dark:bg-neutral-900"
+              className="p-4 border-2 border-black dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900"
             >
               <p className="text-xs font-black font-sans uppercase mb-1 opacity-60">
                 {ep.label}
@@ -55,10 +55,10 @@ export default function IdpIntegrationDocs() {
       </section>
 
       <section className="space-y-8">
-        <h2 className="text-3xl font-black font-sans">PKCE Flow</h2>
+        <h2 className="text-3xl font-semibold font-sans">PKCE Flow</h2>
 
         <div className="space-y-6">
-          <h3 className="text-2xl font-black font-sans italic">
+          <h3 className="text-2xl font-semibold font-sans italic">
             1. Authorization Request
           </h3>
           <p className="font-serif text-muted-foreground leading-relaxed">
@@ -80,7 +80,7 @@ export default function IdpIntegrationDocs() {
         </div>
 
         <div className="space-y-6">
-          <h3 className="text-2xl font-black font-sans italic">
+          <h3 className="text-2xl font-semibold font-sans italic">
             2. Handle the Callback
           </h3>
           <p className="font-serif text-muted-foreground leading-relaxed">
@@ -100,7 +100,7 @@ export default function IdpIntegrationDocs() {
         </div>
 
         <div className="space-y-6">
-          <h3 className="text-2xl font-black font-sans italic">
+          <h3 className="text-2xl font-semibold font-sans italic">
             3. Exchange Code
           </h3>
           <p className="font-serif text-muted-foreground leading-relaxed">
@@ -131,7 +131,7 @@ code_verifier=original_unhashed_verifier`}</code>
       </section>
 
       <section className="space-y-6">
-        <h2 className="text-3xl font-black font-sans">User Info</h2>
+        <h2 className="text-3xl font-semibold font-sans">User Info</h2>
         <Card>
           <CardHeader>
             <p className="font-black font-sans">Fetching Profile Data</p>
@@ -162,7 +162,7 @@ Authorization: Bearer <access_token>`}</code>
       </section>
 
       <section className="space-y-6">
-        <h2 className="text-3xl font-black font-sans">Refreshing Tokens</h2>
+        <h2 className="text-3xl font-semibold font-sans">Refreshing Tokens</h2>
         <Card>
           <CardHeader>
             <p className="font-black font-sans">Obtain a new access token</p>
@@ -189,7 +189,7 @@ client_secret=your_client_secret`}</code>
       </section>
 
       <section className="space-y-6">
-        <h2 className="text-3xl font-black font-sans">Logging Out</h2>
+        <h2 className="text-3xl font-semibold font-sans">Logging Out</h2>
         <Card>
           <CardHeader>
             <p className="font-black font-sans">End the user session</p>
@@ -207,7 +207,7 @@ client_secret=your_client_secret`}</code>
         </Card>
       </section>
 
-      <div className="p-8 border-4 border-black dark:border-gray-700 bg-[#FF9149] dark:bg-secondary text-black">
+      <div className="p-8 border-4 border-black dark:border-neutral-700 bg-[#FF9149] dark:bg-secondary text-black">
         <p className="font-black font-sans text-xl mb-2">
           Pro Tip: Standard Compatibility
         </p>

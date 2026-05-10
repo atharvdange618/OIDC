@@ -5,9 +5,9 @@ import { FaCode } from "react-icons/fa6";
 
 export const CTA = () => {
   return (
-    <Section className="border-t-4 border-black dark:border-gray-700 bg-[#60B5FF] dark:bg-primary text-black py-32">
+    <Section className="border-t-4 border-black dark:border-neutral-700 bg-[#60B5FF] dark:bg-primary text-black py-32">
       <div className="text-center">
-        <h2 className="text-5xl sm:text-7xl font-black font-sans mb-8">
+        <h2 className="text-5xl sm:text-7xl font-semibold font-sans mb-8">
           Ready to ship?
         </h2>
         <p className="text-xl font-serif mb-12 max-w-2xl mx-auto opacity-80">
@@ -18,7 +18,7 @@ export const CTA = () => {
           <a href="#quickstart">
             <Button
               size="lg"
-              className="bg-black text-white border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,0.3)] flex items-center gap-2"
+              className="bg-neutral-950 text-white border-black shadow-[8px_8px_0px_0px_rgba(255,255,255,0.3)] flex items-center gap-2"
             >
               <GoRocket size={20} />
               Start Building Now

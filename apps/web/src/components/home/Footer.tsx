@@ -2,7 +2,7 @@ import { Logo } from "./Logo";
 
 export const Footer = () => {
   return (
-    <footer className="border-t-4 border-black dark:border-gray-700 bg-white dark:bg-neutral-900">
+    <footer className="border-t-4 border-black dark:border-neutral-700 bg-white dark:bg-neutral-900">
       <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3 mb-1">

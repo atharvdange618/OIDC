@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export const Navbar = () => {
   return (
-    <header className="border-b-4 border-black dark:border-gray-700 bg-white dark:bg-neutral-900 sticky top-0 z-50">
+    <header className="border-b-4 border-black dark:border-neutral-700 bg-white dark:bg-neutral-900 sticky top-0 z-50">
       <div className="mx-auto max-w-6xl px-6 py-5 flex items-center justify-between gap-6">
         <div className="flex items-center gap-3">
           <Link href="/">
@@ -30,12 +30,12 @@ export const Navbar = () => {
           >
             Quickstart
           </a>
-          <a
+          <Link
             href="/docs"
             className="hidden sm:inline-flex text-black dark:text-white font-bold underline decoration-4 decoration-[#60B5FF] hover:decoration-[#FF9149] transition-colors"
           >
             Docs
-          </a>
+          </Link>
           <a href="#quickstart" className="inline-flex">
             <Button
               size="sm"

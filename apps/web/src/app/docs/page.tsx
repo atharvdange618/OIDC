@@ -17,7 +17,7 @@ export default function DocsIntroduction() {
         <Tag tone="blue" className="mb-4">
           WELCOME
         </Tag>
-        <h1 className="text-4xl sm:text-6xl font-black font-sans leading-tight">
+        <h1 className="text-4xl sm:text-6xl font-semibold font-sans leading-tight">
           Introduction
         </h1>
         <p className="mt-6 text-xl text-muted-foreground font-serif leading-relaxed max-w-3xl">
@@ -32,7 +32,7 @@ export default function DocsIntroduction() {
           <CardHeader>
             <p className="font-black font-sans text-2xl">Next.js SDK</p>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col justify-between space-y-6">
+          <CardContent className="flex-1 flex flex-col justify-between gap-y-6">
             <p className="font-serif text-muted-foreground leading-relaxed">
               The fastest way to add auth to your Next.js application. Handles
               PKCE, sessions, and HTTP-only cookies out of the box.
@@ -51,7 +51,7 @@ export default function DocsIntroduction() {
           <CardHeader className="bg-[#AFDDFF]/10">
             <p className="font-black font-sans text-2xl">Manual Integration</p>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col justify-between space-y-6">
+          <CardContent className="flex-1 flex flex-col justify-between gap-y-6">
             <p className="font-serif text-muted-foreground leading-relaxed">
               Use the Kleis Identity Provider (IdP) as a standalone OIDC server.
               Language agnostic and compatible with any standard OIDC library.
@@ -67,11 +67,11 @@ export default function DocsIntroduction() {
         </Card>
       </div>
 
-      <div className="p-8 border-4 border-black dark:border-gray-700 bg-black text-white">
-        <h3 className="text-2xl font-black font-sans mb-4">
+      <div className="p-8 border-4 border-black dark:border-neutral-700 bg-neutral-950 text-white">
+        <h3 className="text-2xl font-semibold font-sans mb-4">
           Why choose Kleis?
         </h3>
-        <ul className="grid gap-4 md:grid-cols-2 font-serif text-gray-400">
+        <ul className="grid gap-4 md:grid-cols-2 font-serif text-neutral-400">
           <li className="flex gap-2">
             <span className="text-primary font-black">✔</span> Full SSO Across
             All Your Apps

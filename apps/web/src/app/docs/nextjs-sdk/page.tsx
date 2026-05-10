@@ -16,7 +16,7 @@ export default function NextJsSdkDocs() {
         <Tag tone="blue" className="mb-4">
           SDK GUIDE
         </Tag>
-        <h1 className="text-4xl sm:text-6xl font-black font-sans leading-tight">
+        <h1 className="text-4xl sm:text-6xl font-semibold font-sans leading-tight">
           Next.js SDK
         </h1>
         <p className="mt-6 text-xl text-muted-foreground font-serif leading-relaxed max-w-3xl">
@@ -29,7 +29,7 @@ export default function NextJsSdkDocs() {
       </header>
 
       <section className="space-y-6">
-        <h2 className="text-3xl font-black font-sans">Installation</h2>
+        <h2 className="text-3xl font-semibold font-sans">Installation</h2>
         <p className="font-serif text-muted-foreground leading-relaxed">
           Install the package via your preferred package manager:
         </p>
@@ -39,7 +39,7 @@ export default function NextJsSdkDocs() {
       </section>
 
       <section className="space-y-6">
-        <h2 className="text-3xl font-black font-sans">Environment Variables</h2>
+        <h2 className="text-3xl font-semibold font-sans">Environment Variables</h2>
         <p className="font-serif text-muted-foreground leading-relaxed">
           Add these to your{" "}
           <code className="font-mono bg-muted px-1">.env.local</code> file. Make
@@ -64,10 +64,10 @@ KLEIS_SECRET="generate_a_random_secure_string_here"`}</code>
       </section>
 
       <section className="space-y-10">
-        <h2 className="text-3xl font-black font-sans">Server Setup</h2>
+        <h2 className="text-3xl font-semibold font-sans">Server Setup</h2>
 
         <div className="space-y-6">
-          <h3 className="text-2xl font-black font-sans">
+          <h3 className="text-2xl font-semibold font-sans">
             1. API Route Handler
           </h3>
           <p className="font-serif text-muted-foreground leading-relaxed">
@@ -86,7 +86,7 @@ export { handler as GET, handler as POST };`}</code>
         </div>
 
         <div className="space-y-6">
-          <h3 className="text-2xl font-black font-sans">2. Route Protection</h3>
+          <h3 className="text-2xl font-semibold font-sans">2. Route Protection</h3>
           <p className="font-serif text-muted-foreground leading-relaxed">
             Use the provided middleware to protect your application routes.
             Unauthenticated users will be redirected to the login page.
@@ -107,10 +107,10 @@ export const config = {
       </section>
 
       <section className="space-y-10">
-        <h2 className="text-3xl font-black font-sans">Client Setup</h2>
+        <h2 className="text-3xl font-semibold font-sans">Client Setup</h2>
 
         <div className="space-y-6">
-          <h3 className="text-2xl font-black font-sans">1. Session Provider</h3>
+          <h3 className="text-2xl font-semibold font-sans">1. Session Provider</h3>
           <p className="font-serif text-muted-foreground leading-relaxed">
             Wrap your application in the <code className="font-mono bg-muted px-1">KleisProvider</code> to make authentication state available to all client components.
           </p>
@@ -138,7 +138,7 @@ export default async function RootLayout({
       </section>
 
       <section className="space-y-8">
-        <h2 className="text-3xl font-black font-sans">Usage</h2>
+        <h2 className="text-3xl font-semibold font-sans">Usage</h2>
 
         <Card>
           <CardHeader>

@@ -34,20 +34,20 @@ const sizes: Record<ButtonSize, string> = {
   lg: "px-8 py-4 text-base",
 };
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { className, variant = "primary", size = "lg", type = "button", ...props },
-    ref,
-  ) => {
-    return (
-      <button
-        ref={ref}
-        type={type}
-        className={cn(base, variants[variant], sizes[size], className)}
-        {...props}
-      />
-    );
-  },
-);
-
-Button.displayName = "Button";
+export function Button({
+  className,
+  variant = "primary",
+  size = "lg",
+  type = "button",
+  ref,
+  ...props
+}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) {
+  return (
+    <button
+      ref={ref}
+      type={type}
+      className={cn(base, variants[variant], sizes[size], className)}
+      {...props}
+    />
+  );
+}

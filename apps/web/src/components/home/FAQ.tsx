@@ -26,18 +26,18 @@ export const FAQ = () => {
   ];
 
   return (
-    <Section className="border-t-4 border-black dark:border-gray-700">
+    <Section className="border-t-4 border-black dark:border-neutral-700">
       <div className="mb-16">
-        <h2 className="text-4xl sm:text-5xl font-black font-sans">
-          Common Questions
+          <h2 className="text-4xl sm:text-5xl font-semibold font-sans">
+            Common Questions
         </h2>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {faqs.map((faq, i) => (
+        {faqs.map((faq) => (
           <div
-            key={i}
-            className="p-8 border-4 border-black dark:border-gray-700 bg-white dark:bg-neutral-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+            key={faq.q}
+            className="p-8 border-4 border-black dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
           >
             <p className="font-black font-sans text-lg mb-4">{faq.q}</p>
             <p className="font-serif text-muted-foreground leading-relaxed">
