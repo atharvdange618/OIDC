@@ -55,6 +55,7 @@ app.use(
         objectSrc: ["'none'"],
         frameSrc: ["'none'"],
         connectSrc: ["'self'"],
+        formAction: ["'self'"],
       },
     },
     hsts: {
