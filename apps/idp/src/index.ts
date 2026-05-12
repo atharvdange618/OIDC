@@ -12,6 +12,7 @@ import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
+import { corsOriginCallback, initCorsOrigins } from "./lib/cors";
 import { logger } from "./lib/logger";
 import discoveryRouter from "./routes/discovery.routes";
 import authRouter from "./routes/auth.routes";
@@ -67,7 +68,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: env.CLIENT_URL,
+    origin: corsOriginCallback,
     credentials: true,
   }),
 );
@@ -109,13 +110,22 @@ app.use("/userinfo", userinfoRouter);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  logger.info(
-    {
-      port: PORT,
-      env: env.NODE_ENV,
-      viewsPath: getViewsPath(),
-    },
-    "IdP server started",
-  );
+async function main() {
+  await initCorsOrigins();
+
+  app.listen(PORT, () => {
+    logger.info(
+      {
+        port: PORT,
+        env: env.NODE_ENV,
+        viewsPath: getViewsPath(),
+      },
+      "IdP server started",
+    );
+  });
+}
+
+main().catch((err) => {
+  logger.fatal({ err }, "Failed to start server");
+  process.exit(1);
 });
