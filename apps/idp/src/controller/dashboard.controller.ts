@@ -27,6 +27,14 @@ export class DashboardController {
         });
       });
       req.session.userId = result.userId;
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+
       res.redirect("/dashboard/developer");
     } catch (error: any) {
       res.render("dev-login", { error: "Invalid email or password" });
@@ -58,6 +66,14 @@ export class DashboardController {
         });
       });
       req.session.userId = user.id;
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+
       res.redirect("/dashboard/developer");
     } catch (error: any) {
       res.render("dev-register", {
@@ -141,10 +157,18 @@ export class DashboardController {
         },
       });
 
-      sendSuccess(res, { message: "Profile updated successfully", user: updatedUser });
+      sendSuccess(res, {
+        message: "Profile updated successfully",
+        user: updatedUser,
+      });
     } catch (error) {
       log.error({ err: error, userId }, "Error updating profile");
-      sendError(res, ErrorCodes.PROFILE_UPDATE_FAILED, "Failed to update profile", 500);
+      sendError(
+        res,
+        ErrorCodes.PROFILE_UPDATE_FAILED,
+        "Failed to update profile",
+        500,
+      );
     }
   }
 

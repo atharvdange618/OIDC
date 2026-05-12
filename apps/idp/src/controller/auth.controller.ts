@@ -92,7 +92,15 @@ export class AuthController {
           else resolve();
         });
       });
+
       req.session.userId = result.userId;
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
 
       log.info(
         {
@@ -213,7 +221,15 @@ export class AuthController {
           else resolve();
         });
       });
+
       req.session.userId = user.id;
+
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
 
       log.info(
         {
