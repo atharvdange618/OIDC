@@ -64,7 +64,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "next": "16.2.6",
+    "next": "16.1.7",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "typescript": "^5"
