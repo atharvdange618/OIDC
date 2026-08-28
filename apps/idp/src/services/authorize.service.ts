@@ -1,54 +1,72 @@
 import { randomBytes } from "crypto";
-import {
-  BadRequestError,
-  UnauthorizedError,
-  NotFoundError,
-} from "../errors/AppError";
+import { BadRequestError, UnauthorizedError } from "../errors/AppError";
 import { ErrorCodes } from "../errors/ErrorCodes";
 import type { AuthorizeInput } from "../validation/authorize.validation";
 import { prisma } from "../lib/prisma";
 import { getActiveClient } from "../lib/oauthClient";
+import { logger } from "../lib/logger";
+
+const log = logger.child({ module: "authorize.service" });
+
+/**
+ * Validates the shared /authorize request params (client, redirect_uri, scopes).
+ * Called from both the GET handler and the token-issuing step so the checks
+ * live in one place. redirect_uri uses exact string matching per RFC 6749.
+ */
+export async function validateAuthorizeParams(input: AuthorizeInput) {
+  const client = await getActiveClient(input.client_id);
+  if (!client) {
+    throw new BadRequestError("Invalid client", ErrorCodes.INVALID_CLIENT);
+  }
+
+  const registeredUris = client.redirectUris as string[];
+  if (!registeredUris.includes(input.redirect_uri)) {
+    log.warn(
+      {
+        clientId: input.client_id,
+        providedUri: input.redirect_uri,
+        security: true,
+      },
+      "redirect_uri not registered - possible open-redirect attempt",
+    );
+    throw new BadRequestError(
+      "redirect_uri does not match any registered URI",
+      ErrorCodes.INVALID_REDIRECT_URI,
+    );
+  }
+
+  const requestedScopes = input.scope.split(" ");
+  if (!requestedScopes.includes("openid")) {
+    throw new BadRequestError(
+      'scope must include "openid"',
+      ErrorCodes.INVALID_SCOPE,
+    );
+  }
+
+  const invalidScopes = requestedScopes.filter(
+    (s) => !client.allowedScopes.includes(s),
+  );
+  if (invalidScopes.length > 0) {
+    throw new BadRequestError(
+      `Client is not allowed to request scopes: ${invalidScopes.join(", ")}`,
+      ErrorCodes.INVALID_SCOPE,
+    );
+  }
+
+  return { client, requestedScopes };
+}
 
 export class AuthorizeService {
   async authorize(input: AuthorizeInput, userId: string) {
-    const client = await getActiveClient(input.client_id);
-    if (!client) throw new NotFoundError("Client not found", ErrorCodes.CLIENT_NOT_FOUND);
+    const { requestedScopes } = await validateAuthorizeParams(input);
 
-    const registeredUris = client.redirectUris as string[];
-
-    const normalizeUri = (uri: string) =>
-      uri.endsWith("/") ? uri.slice(0, -1) : uri;
-    const isUriMatched = registeredUris.some(
-      (uri) => normalizeUri(uri) === normalizeUri(input.redirect_uri),
-    );
-
-    if (!isUriMatched)
-      throw new BadRequestError(
-        "redirect_uri does not match any registered URI",
-        ErrorCodes.INVALID_REDIRECT_URI,
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.isActive) {
+      throw new UnauthorizedError(
+        "User not found or inactive",
+        ErrorCodes.USER_NOT_FOUND,
       );
-
-    const requestedScopes = input.scope.split(" ");
-    const hasOpenid = requestedScopes.includes("openid");
-    if (!hasOpenid) throw new BadRequestError('scope must include "openid"', ErrorCodes.INVALID_SCOPE);
-
-    const invalidScopes = requestedScopes.filter(
-      (s) => !client.allowedScopes.includes(s),
-    );
-    if (invalidScopes.length > 0)
-      throw new BadRequestError(
-        `Client is not allowed to request scopes: ${invalidScopes.join(", ")}`,
-        ErrorCodes.INVALID_SCOPE,
-      );
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
-    if (!user || !user.isActive)
-      throw new UnauthorizedError("User not found or inactive", ErrorCodes.USER_NOT_FOUND);
+    }
 
     const code = randomBytes(32).toString("base64url");
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);

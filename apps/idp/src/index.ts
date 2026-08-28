@@ -30,18 +30,10 @@ const PgSession = connectPgSimple(session);
 
 app.set("view engine", "ejs");
 
-const getViewsPath = () => {
-  const possiblePaths = [
-    path.join(process.cwd(), "src/views"),
-    path.join(process.cwd(), "dist/views"),
-    path.join(process.cwd(), "views"),
-  ];
-
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) return p;
-  }
-  return possiblePaths[0];
-};
+const getViewsPath = () =>
+  ["src/views", "dist/views", "views"]
+    .map((dir) => path.join(process.cwd(), dir))
+    .find(fs.existsSync) ?? path.join(process.cwd(), "src/views");
 
 app.set("views", getViewsPath());
 

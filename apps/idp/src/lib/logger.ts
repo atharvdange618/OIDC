@@ -1,11 +1,16 @@
 import pino from "pino";
+import fs from "fs";
 import path from "path";
+import { createHash } from "crypto";
 import { env } from "../config/env";
 
 const isDev = env.NODE_ENV !== "production";
 const LOG_LEVEL = env.LOG_LEVEL ?? (isDev ? "debug" : "info");
 
+// pino builds both transports eagerly, so the rotating-file sink needs this
+// directory to exist even in dev.
 const LOGS_DIR = path.join(process.cwd(), "logs");
+fs.mkdirSync(LOGS_DIR, { recursive: true });
 
 /**
  * Production transport: two rotating file sinks.
@@ -99,10 +104,5 @@ export function truncateToken(token: string, chars = 8): string {
  * Hash a session ID for log correlation without exposing the raw session.
  */
 export function hashSessionId(sessionId: string): string {
-  let hash = 0;
-  for (let i = 0; i < sessionId.length; i++) {
-    hash = (hash << 5) - hash + sessionId.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(16).padStart(8, "0");
+  return createHash("sha256").update(sessionId).digest("hex").slice(0, 8);
 }

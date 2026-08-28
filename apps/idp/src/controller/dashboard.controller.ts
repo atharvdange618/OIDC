@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { authService } from "../services/auth.service";
 import { prisma } from "../lib/prisma";
 import { logger } from "../lib/logger";
-import { sendSuccess, sendError } from "../lib/response";
+import { sendSuccess } from "../lib/response";
+import { AppError } from "../errors/AppError";
 import { ErrorCodes } from "../errors/ErrorCodes";
 
 const log = logger.child({ module: "dashboard.controller" });
@@ -163,11 +164,10 @@ export class DashboardController {
       });
     } catch (error) {
       log.error({ err: error, userId }, "Error updating profile");
-      sendError(
-        res,
-        ErrorCodes.PROFILE_UPDATE_FAILED,
+      throw new AppError(
         "Failed to update profile",
         500,
+        ErrorCodes.PROFILE_UPDATE_FAILED,
       );
     }
   }

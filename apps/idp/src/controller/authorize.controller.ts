@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import { AuthorizeInput } from "../validation/authorize.validation";
-import { authorizeService } from "../services/authorize.service";
+import {
+  authorizeService,
+  validateAuthorizeParams,
+} from "../services/authorize.service";
 import { BadRequestError } from "../errors/AppError";
 import { ErrorCodes } from "../errors/ErrorCodes";
 import { ISSUER } from "../config/keys";
 import { prisma } from "../lib/prisma";
-import { getActiveClient } from "../lib/oauthClient";
 import { RequestWithValidatedQuery } from "../middleware/validate";
 import { consentService } from "../services/consent.service";
 import { logger, truncateToken } from "../lib/logger";
@@ -25,39 +27,7 @@ export class AuthorizeController {
     const input = (req as RequestWithValidatedQuery)
       .validatedQuery as AuthorizeInput;
 
-    const client = await getActiveClient(input.client_id);
-    if (!client) throw new BadRequestError("Invalid client", ErrorCodes.INVALID_CLIENT);
-
-    const registeredUris = client.redirectUris as string[];
-    if (!registeredUris.includes(input.redirect_uri)) {
-      log.warn(
-        {
-          clientId: input.client_id,
-          providedUri: input.redirect_uri,
-          security: true,
-        },
-        "redirect_uri not registered - possible open-redirect attempt",
-      );
-      throw new BadRequestError(
-        "redirect_uri does not match any registered URI",
-        ErrorCodes.INVALID_REDIRECT_URI,
-      );
-    }
-
-    const requestedScopes = input.scope.split(" ");
-    if (!requestedScopes.includes("openid")) {
-      throw new BadRequestError('scope must include "openid"', ErrorCodes.INVALID_SCOPE);
-    }
-
-    const invalidScopes = requestedScopes.filter(
-      (s) => !client.allowedScopes.includes(s),
-    );
-    if (invalidScopes.length > 0) {
-      throw new BadRequestError(
-        `Client is not allowed to request scopes: ${invalidScopes.join(", ")}`,
-        ErrorCodes.INVALID_SCOPE,
-      );
-    }
+    const { client, requestedScopes } = await validateAuthorizeParams(input);
 
     if (!req.session.userId) {
       const params = new URLSearchParams({ ...input });

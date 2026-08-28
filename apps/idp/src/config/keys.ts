@@ -2,44 +2,22 @@ import fs from "fs";
 import path from "path";
 import { env } from "./env";
 
-const getPrivateKey = () => {
-  const possiblePaths = [
-    path.resolve(process.cwd(), "src/keys/private.pem"),
-    path.resolve(process.cwd(), "dist/keys/private.pem"),
-    path.resolve(process.cwd(), "keys/private.pem"),
-  ];
+const readKey = (name: string) => {
+  const file = ["src/keys", "dist/keys", "keys"]
+    .map((dir) => path.resolve(process.cwd(), dir, name))
+    .find(fs.existsSync);
 
-  for (const filePath of possiblePaths) {
-    if (fs.existsSync(filePath)) {
-      return fs.readFileSync(filePath, "utf-8");
-    }
+  if (!file) {
+    throw new Error(
+      `${name} not found. Place it in apps/idp/src/keys/ (see README for the openssl commands).`,
+    );
   }
 
-  throw new Error(
-    "Private key not found. Please provide PRIVATE_KEY env var or place private.pem in src/keys/",
-  );
+  return fs.readFileSync(file, "utf-8");
 };
 
-const getPublicKey = () => {
-  const possiblePaths = [
-    path.resolve(process.cwd(), "src/keys/public.pem"),
-    path.resolve(process.cwd(), "dist/keys/public.pem"),
-    path.resolve(process.cwd(), "keys/public.pem"),
-  ];
-
-  for (const filePath of possiblePaths) {
-    if (fs.existsSync(filePath)) {
-      return fs.readFileSync(filePath, "utf-8");
-    }
-  }
-
-  throw new Error(
-    "Public key not found. Please provide PUBLIC_KEY env var or place public.pem in src/keys/",
-  );
-};
-
-const privateKeyPem = getPrivateKey();
-const publicKeyPem = getPublicKey();
+const privateKeyPem = readKey("private.pem");
+const publicKeyPem = readKey("public.pem");
 
 export const KEY_ID = env.KEY_ID;
 export const ISSUER = env.ISSUER;
