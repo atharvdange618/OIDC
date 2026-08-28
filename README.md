@@ -284,7 +284,26 @@ Modern microservices strive to be completely stateless. However, providing a Sin
 
 ## Getting Started
 
-Follow these steps to run Kleis OIDC locally:
+### Run with Docker (no local setup)
+
+Needs Docker Desktop only. From the repo root:
+
+```bash
+docker compose up --build
+```
+
+This starts Postgres and the IdP. On first boot the IdP container generates its
+RSA keypair, applies the Prisma migrations, and starts on
+[http://localhost:4000](http://localhost:4000). Check the discovery document at
+`http://localhost:4000/.well-known/openid-configuration`.
+
+The keypair lives in a named volume (`idp_keys`) and Postgres data in `pgdata`,
+so both survive `docker compose down`. Source is baked into the image; rebuild
+with `docker compose up --build` to pick up code changes.
+
+### Run locally
+
+Follow these steps to run Kleis OIDC without Docker:
 
 ### 1. Clone the Repository & Install Dependencies
 

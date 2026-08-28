@@ -1,0 +1,9 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/.git
+apps/idp/src/generated
+apps/idp/src/keys
+apps/idp/logs
+**/*.log

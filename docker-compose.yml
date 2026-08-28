@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: kleis
+      POSTGRES_PASSWORD: kleis
+      POSTGRES_DB: kleis_oidc
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kleis -d kleis_oidc"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  idp:
+    build:
+      context: .
+      dockerfile: apps/idp/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://kleis:kleis@db:5432/kleis_oidc
+      PORT: "4000"
+      ISSUER: http://localhost:4000
+      KEY_ID: key-1
+      SESSION_SECRET: dev-session-secret-not-for-production-use
+      NODE_ENV: development
+      LOG_LEVEL: debug
+      CORS_EXTRA_ORIGINS: http://localhost:3000
+    volumes:
+      - idp_keys:/app/apps/idp/src/keys
+
+volumes:
+  pgdata:
+  idp_keys:
